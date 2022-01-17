@@ -1,0 +1,3072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Enter your description here" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="prism.css">
+    <script src="prism.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap" rel="stylesheet">
+    <title>myportalx.com || Yogi Coach Documentation</title>
+    <style>
+        * {
+            font-family: Poppins, sans-serif;
+        }
+
+        h2 {
+            font-weight: 800;
+        }
+
+        p {
+            font-weight: 400;
+        }
+
+        pre[class*=language-] {
+            background: #272822;
+            height: 200px;
+        }
+    </style>
+    <div class="container">
+        <h1>Yogi Coach</h1>
+        <p>Coach Dashboard</p>
+        <img class="img-fluid" src="image/dashboardcoach.png" alt="Login Page" height="100">
+        <br><br>
+        <p>Dashboard controller page</p>
+        <code>application/controllers/yogicoach.php</code>
+        <pre><code class="language-html"><xmp><?php
+        defined('BASEPATH') OR exit('No direct script access allowed');
+        
+        class Yogiccoach extends CI_Controller {
+        	private $userid;
+        	private $adminid;
+            private $modulelist;
+            private $moduleMultiRow = array();
+        	public function __construct()
+        	{
+        		parent::__construct();
+        		$currentMethod = $this->router->fetch_method();
+        
+        		// $this->load->library('session');
+        		$session = $this->session->userdata();
+        		if(isset($session['user_id'])) {
+        			$this->userid = $session['user_id'];
+        		}
+        		else {
+        			 redirect(base_url());                   
+        			die();
+        		}
+        		if(!isset($session["user_type"]))
+        		{
+        			redirect(base_url());
+        			die();
+        		}
+        		else if($session['user_type']=="member"){
+        			redirect(base_url()."member");
+        			die();
+        		}else if($session['user_type']!="yogiccoach"){
+        			redirect(base_url());
+        			die();
+        		}
+        $member=$this->db->get_where('users',array('fld_id'=>$this->userid));
+                if ($member->num_rows()>0) {
+            		$row=$member->row_array();
+        	        $timezone = $row['fld_timezone'];
+                }
+        		date_default_timezone_set($timezone);
+        		$exclude_methods = array("subscription","thank_you","check_promotion_code");
+        
+                $userDetails = $this->db->get_where("users",array("fld_id"=>$this->userid));
+        		$userDetails = $userDetails->row();
+        		$session["payment_status"] = $userDetails->fld_payment_status;
+                
+        		if(!in_array($currentMethod,$exclude_methods)) {
+        			if(!isset($session["payment_status"])){
+                        redirect(base_url()."yogiccoach/subscription");
+                    }
+                    else if($session["payment_status"] !="1"){
+                        redirect(base_url()."yogiccoach/subscription");
+                    }
+        			//else if($session["due_date"] ){
+                        //redirect(base_url()."yogiccoach/subscription");
+                    //}
+        		}
+        
+        
+        
+                reset($this->moduleMultiRow);
+                if(isset($session["ModuleList"]) && sizeof($session["ModuleList"]) > 0){
+                    $this->modulelist = $session["ModuleList"];
+                    $this->moduleMultiRow = $session["moduleMultiRow"];
+                }
+                else{
+                    //, "daily_score"=>"Daily Accountibility Score"
+                    $this->modulelist = array("wheeloflife_record"=>"Wheel of life"
+                        );
+        
+                    $this->load->model("user_model");
+        
+                    $coaching_forms1 = $this->user_model->get_marketing_forms($this->userid,'', true);
+                    foreach($coaching_forms1 as $forms){
+                         $this->modulelist[$forms->table_name]= 'BUSINESS - '.$forms->title; 
+                        if($forms->multirow == "1")
+                            array_push($this->moduleMultiRow,$forms->table_name);
+                    }
+        
+                    $coaching_forms = $this->user_model->get_coaching_forms($this->userid,'', true);
+                    foreach($coaching_forms as $form){
+                         $this->modulelist[$form->table_name]= 'PERSONAL - '.$form->title; 
+                        if($form->multirow == "1")
+                            array_push($this->moduleMultiRow,$form->table_name);
+                    }
+                     $session["ModuleList"] = $this->modulelist;
+                     $session["moduleMultiRow"] = $this->moduleMultiRow;
+                }
+        		//  var_dump($this->modulelist);
+        		
+        	}
+        	
+        	public function index()
+        	{
+        		$coaching_forms_count['coaching_forms_count'] = $this->user_model->get_marketing_forms_count($this->userid);
+        		$this->load->view('yogiccoach/dashboard',$coaching_forms_count);
+        	}</xmp></code></pre>
+            <p>Dashboard view page</p>
+            <code>application/views/yogiccoach/dashboard.php</code>
+            <pre><code class="language-html"><xmp><?php 
+              defined('BASEPATH') OR exit('No direct script access allowed');
+              $this->lang->load('date', 'english');
+              $session = $this->session->get_userdata();
+              $login_id=$session['user_id'];
+              $this->load->view('yogiccoach/sitebars'); 
+            $this->db->order_by("fld_id", "desc");
+            $getData=$this->db->get_where('users',array('fld_parent'=>$login_id));
+            $get = $getData->result();
+            $num_client = $getData->num_rows();
+            
+            $userData = $this->db->get_where('chat',array('receiver_id'=> $login_id ,'status'=>'0'));
+                if ($userData->num_rows()>0) {
+              $countMsg=$userData->num_rows();  
+            }else{
+              $countMsg=0;
+            }
+            
+            foreach ($get as $row) {
+            }
+            ?>
+            <div id="callincoming"></div>
+            <audio id="myAudio">
+                <source src="horse.ogg" type="audio/ogg">
+                <source src="<?= base_url('assets/audio/skype-27014.mp3') ?>" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <!-- Begin Page Content -->
+            <div class="container-fluid main-container">
+            
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Coach Dashboard</h1>
+                    <a href="http://help.myportalx.com/" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                            class="fas fa-question fa-sm text-white-50"></i> Help Me!</a>
+                </div>
+            
+                <!-- Content Row <i class="fas fa-question"></i>-->
+                <div class="row text-center">
+                    <!-- Earnings (Monthly) Card Example -->
+                    <div class="col-xl-4 col-md-6 col-sm-4 mb-4">
+                        <div class="card border-primary shadow h-100 py-2">
+                            <a href="<?php echo base_url().'messages' ?>">
+                                <div class="card-body">
+                                    <div class="col ">
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">Messages</div>
+                                    </div>
+                                    <hr>
+                                    <div class="col-auto">
+                                        <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/email.png"
+                                            width="100">
+                                    </div>
+                                    <hr>
+                                    <div class="card-text">
+                                        <span>
+                                            <?php echo $countMsg?>
+                                        </span>
+                                    </div>
+            
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+            
+                    <!-- Earnings (Monthly) Card Example -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-success shadow h-100 py-2">
+                            <a href="<?= base_url()?>/Appointment_Calendar">
+                                <div class="card-body">
+                                    <div class="col">
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">Appointments</div>
+                                    </div>
+                                    <hr>
+                                    <div class="col-auto">
+                                        <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/calendar (1).png"
+                                            width="100">
+                                    </div>
+                                    <hr>
+                                    <div class="card-text">
+                                        <span>
+                                            <?php $query = $this->db->query('SELECT * FROM mys_ea_appointments WHERE `id_users_provider`= "'.$login_id.'" ');
+            echo $query->num_rows(); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+            
+                    <!-- Earnings (Monthly) Card Example -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-info shadow h-100 py-2">
+                            <a href="<?= base_url() ?>ClientList">
+                                <div class="card-body">
+                                    <div class="col">
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">Clients</div>
+                                    </div>
+                                    <hr>
+                                    <div class="col-auto">
+                                        <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/customer (1).png"
+                                            width="100">
+                                    </div>
+                                    <hr>
+                                    <div class="card-text">
+                                        <span>
+                                            <?= $num_client?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+            
+                    <!-- Pending Requests Card Example -->
+                </div>
+            
+                <!-- Content Row -->
+            
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <!--<div class="card bg-primary text-white mb-5  shadow">-->
+                        <!--  <div class="card-body">-->
+                        <!--    <p class="card-text">-->
+                        <!--            <span>Current Weather</span>-->
+                        <!--            <span><img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/snow.png" width="50"></span>-->
+                        <!--            <span id="tempC">Loading...</span>-->
+                        <!--      </p>-->
+                        <!--  </div>-->
+                        <!--</div>-->
+                        <!--<div class="card bg-success text-white shadow">-->
+                        <!--  <div class="card-body">-->
+                        <!--    <p class="card-text">-->
+                        <!--            <span>Time</span>-->
+                        <!--            <span><img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/clock (1).png" width="50"></span>-->
+                        <!--            <span><var id="hours">00</var><var>:</var><var id="menutes">00</var>&nbsp;<span id="ampm">AM</span></span>-->
+                        <!--      </p>-->
+                        <!--  </div>-->
+                        <!--</div>-->
+                        <a href="#" data-toggle="modal" data-target="#message-form-modal">
+                            <div class="card">
+                                <h5 class="card-header">
+                                    Maya
+                                </h5>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        <img src="<?= base_url('/assets/images/Portal.png') ?>" height="140" class="img-responsive">
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+            
+                    <!-- client journey form Modal-->
+                    <div class="modal fade" id="message-form-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content" style="align-items: center;">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Choose how you want to connect</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="cards shadow mb-1  p-2">
+                                        <a href="<?php echo base_url(" yogiccoach/maya") ?>" class="btn btn-info">Maya Video
+                                            Chat</a>
+                                        <a href="<?php echo base_url(" Messages") ?>" class="btn btn-info pull-right">Messenger
+                                            Chat</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Area Chart -->
+                    <div class="col-xl-4 col-lg-4">
+                        <!--<div class="card shadow pb-4">-->
+                        <!-- Card Header - Dropdown -->
+                        <a href="#" data-toggle="modal" data-target="#client-journey-form-modal">
+                            <div class="card">
+                                <h5 class="card-header">Client Journey</h5>
+                                <div class="card-body ">
+                                    <p class="card-text">
+                                        <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/promotion.png"
+                                            width="140" class="img-responsive">
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+            
+            
+                    <div class="col-xl-4 col-lg-4">
+            
+                        <a href="<?= base_url('yogiccoach/greenmashin'); ?>">
+                            <div class="card">
+                                <h5 class="card-header">
+                                    The Green Machine
+                                </h5>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/Maanas Icon.png"
+                                            width="140">
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            
+            
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4">
+            
+                        <a href="<?= base_url('yogiccoach/session_notes1').'/'.$login_id?>">
+                            <div class="card">
+                                <h5 class="card-header">
+                                    Notes
+                                </h5>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/notepad (1).png"
+                                            width="140">
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <!--<div class="col-md-4">-->
+                    <!--  <a href="<?= base_url() ?>/Profile">-->
+                    <!--   <div class="card">-->
+                    <!--     <h5 class="card-header">-->
+                    <!--       Profile-->
+                    <!--     </h5>-->
+                    <!--     <div class="card-body">-->
+                    <!--       <p class="card-text">-->
+                    <!--          <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/user (2).png" width="150">-->
+                    <!--       </p>-->
+                    <!--     </div>-->
+                    <!--   </div>-->
+                    <!--   </a>-->
+                    <!-- </div>-->
+                    <div class="col-md-4">
+                        <?php
+                     $coach = $this->db->get_where('site_creater',array('fld_user_id'=>$login_id));
+            
+                     if ($coach->num_rows()>0) 
+                     {
+                        $row = $coach->row_array();
+                        $fld_url = $row["fld_url"];
+                        echo '<a href="'.base_url().'sites/editor.php?foldername='.$fld_url.'" >';
+                     }else
+                     {
+                         echo '<a href="'.base_url().'sites?id='.$login_id.'">';
+                     }
+                    ?>
+            
+                        <div class="card">
+                            <h5 class="card-header">
+                                Site Creator
+                            </h5>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/browser (1).png"
+                                        width="150">
+                                </p>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+            
+                    <div class="col-md-4">
+                        <a href="<?= base_url()?>/library/index.php?user_id=<?=$login_id?>">
+                            <div class="card">
+                                <h5 class="card-header">
+                                    Library
+                                </h5>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        <img src="<?php echo base_url().'assets/';?>new_client_dashboard/images/library.png"
+                                            width="150">
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+            
+            
+            
+                </div>
+            
+            
+            </div>
+            </div>
+            
+            
+            
+            
+            <!-- client journey form Modal-->
+            <div class="modal fade" id="client-journey-form-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Choose Map Type Client Journey</h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="cards shadow mb-1">
+                                <!--  <h6 class="m-0 font-weight-bold text-primary">Choose Client Journey</h6> -->
+                                <form style="padding: 5px 5px;">
+                                    <div class="form-group">
+            
+            
+                                        <select class="form-control client_select">
+                                            <option selected disabled>Choose Client</option>
+                                            <?php $this->db->order_by("fld_id", "desc");
+            $getData=$this->db->get_where('users',array('fld_parent'=>$login_id,'fld_status'=> '1'))->result();
+            foreach($getData as $row){
+              $client_name = $row->fld_first_name.' '. $row->fld_last_name;
+                               if(trim($client_name) == "")
+                                 $client_name = $row->fld_username;
+              echo '<option class="red" value="'.$row->fld_id.'"> '.$client_name.' </option>';
+              }
+             ?>
+                                        </select>
+            
+                                        <br>
+                                        <div class="red box">
+                                            <select class="form-control">
+                                                <option selected disabled>Choose Personal/Business</option>
+                                                <option class="green">Personal Map</option>
+                                                <option class="green">Business Map</option>
+            
+                                            </select>
+                                            <br>
+                                        </div>
+                                        <div class="green box">
+                                            <select class="form-control" id="sel2">
+                                                <option selected disabled>Choose Personal/Busniess</option>
+                                                <option value="business_journey" class="blue">Linear Map</option>
+                                                <option value="personal_journey" class="blue">Strategic Map</option>
+            
+                                            </select>
+                                        </div>
+            
+            
+                                        <!-- =========== script ==============  -->
+                                        <script>
+                                            $(document).ready(function () {
+                                                $("select").change(function () {
+                                                    $(this).find("option:selected").each(function () {
+                                                        var optionclass = $(this).attr("class");
+                                                        if (optionclass) {
+                                                            $(".red .box").not("." + optionclass).show();
+                                                            $("." + optionclass).show();
+                                                        }
+
+                                                        else {
+                                                            $(".box").hide();
+                                                        }
+                                                    });
+                                                }).change();
+
+                                            });
+                                        </script>
+                                        <!-- =========== script ==============  -->
+            
+                                    </div>
+            
+                                    <input type="button" name="submit" value="Next" class="btn-warning map">
+                                </form>
+            
+                            </div>
+                        </div>
+                        <script>
+                            $(document).ready(function () {
+                                setInterval(function () { update_profile(); }, 3000);
+
+                                function update_profile() {
+                                    var x = document.getElementById("myAudio");
+                                    $.ajax({
+
+                                        url: "<?=base_url()?>yogiccoach/update_profile",
+
+                                        method: "post",
+
+                                        type: "json",
+
+                                        success: function (response) {
+                                            data = JSON.parse(response);
+                                            console.log(data.status);
+                                            if (data.status == 1) {
+                                                x.play();
+                                                $('#callincoming').html('<div class="alert alert-dark" style="height: 50px;line-height: 50px;padding:0px;"><a href="' + data.url + '" style="margin-right:12px;float:right;"><img src="<?= base_url('assets / img / 0e475bb9b17b3fa4f94f31fba1635b8f - telephone - call - icon - logo - by - vexels.png'); ?>" alt="callend" width="30"></a><a href="<?= base_url('yogiccoach / callend / ') ?>/' + data.fld_id + '" style="margin-right:12px;float:right;"><img src="<?= base_url('assets / img / png - clipart - end - call - button - telephone - call - button - computer - icons - button - text - trademark.png') ?>" alt="callend" width="25"></a></div>');
+                                            } else {
+                                                $('#callincoming').html("");
+                                                x.pause();
+
+                                            }
+                                            // x.play();
+                                        }
+
+                                    });
+
+                                }
+
+                                $('.map').click(function () {
+                                    var id = $('.client_select').val();
+                                    //   alert(id);
+                                    var link = $('#sel2').val();
+                                    window.open("<?= base_url('yogiccoach/') ?>/" + link + "/" + id);
+                                });
+                            });
+                        </script>
+            
+                        <!-- <div class="modal-footer">
+                      <button class="btn btn-secondary" type="button" data-dismiss="modal">Submit</button>
+                    </div> -->
+                    </div>
+                </div>
+            </div>
+            <?php $this->load->view('yogiccoach/foot'); ?></xmp></code></pre>
+            <p>Appointment Calender</p>
+            <img class="img-fluid" src="image/appointmentcalendercoach.png" alt="Login Page" height="100">
+            <br><br>
+            <p>appointment calender controller page</p>
+            <code>application/controllers/yogiccoach.php</code>
+            <pre><code class="language-html"><xmp>public function appointment_calendar($appointment_hash = ''){
+            $this->lang->load('translations', $this->config->item('language'));
+            
+            $this->load->model('appointments_model');
+            $this->load->model('coach_model'); //provide model
+            $this->load->model('services_model');
+            //$this->load->model('customers_model');
+            $this->load->model('appointment_settings_model');
+            $this->load->model('roles_model');
+            $this->load->model('user_model');
+            //$this->load->model('secretaries_model');
+            
+            
+            $view['coachID'] = $this->userid;
+            $view['base_url'] = $this->config->item('base_url');
+            $view['base_url_api'] = $this->config->item('base_url_api');
+            $view['user_display_name'] = $this->user_model->get_user_display_name($this->userid);
+            $view['active_menu'] = PRIV_APPOINTMENTS;
+            $view['book_advance_timeout'] = $this->appointment_settings_model->get_setting('book_advance_timeout');
+            $view['date_format'] = $this->appointment_settings_model->get_setting('date_format');
+            $view['company_name'] =
+            $this->user_model->get_user_display_name($this->userid);//$this->appointment_settings_model->get_setting('company_name');
+            $view['available_providers'] = $this->coach_model->get_coach_details($this->userid);
+            $view['available_services'] = $this->services_model->get_available_services($this->userid);
+            $view['customers'] = $this->user_model->get_batch('',$this->userid);
+            $view['secretary_providers'] = array();
+            $this->set_user_data($view);
+            
+            $results = $this->appointments_model->get_batch(array('hash' => $appointment_hash));
+            if ($appointment_hash != '' && count($results) > 0) {
+            $appointment = $results[0];
+            $appointment['customer'] = $this->user_model->get_row($appointment['id_users_customer']);
+            $view['edit_appointment'] = $appointment; // This will display the appointment edit dialog on page load.
+            } else {
+            $view['edit_appointment'] = NULL;
+            }
+            
+            $this->load->view('yogiccoach/appointment_calendar',$view);
+            
+            }</xmp></code></pre>
+            <p>appointment calender view</p>
+            <code>application/views/yogiccoach/appointment_calendar.php</code>
+            <pre><code class="language-html"><xmp><?php
+            $this->load->view('yogiccoach/sidebar');
+            ?>
+            <link rel="stylesheet" type="text/css"
+                href="<?php echo  base_url();  ?>/assets/appointment/ext/jquery-ui/jquery-ui.min.css">
+            <link rel="stylesheet" type="text/css"
+                href="<?php echo  base_url();  ?>/assets/appointment/ext/jquery-qtip/jquery.qtip.min.css">
+            <link rel="stylesheet" type="text/css"
+                href="<?php echo  base_url();  ?>/assets/appointment/ext/jquery-jscrollpane/jquery.jscrollpane.css">
+            <link rel="stylesheet" type="text/css" href="<?php echo  base_url();  ?>/assets/appointment/css/backend.css">
+            <link rel="stylesheet" type="text/css" href="<?php echo  base_url();  ?>/assets/appointment/css/general.css">
+            <script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/ext/datejs/date.js"></script>
+            <script type="text/javascript">
+                // Global JavaScript Variables - Used in all backend pages.
+                var availableLanguages = <? php echo json_encode($this -> config -> item('available_languages')); ?>;
+                var EALang = <? php echo json_encode($this -> lang -> language); ?>;
+            </script>
+            <script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/ext/jquery/jquery.min.js"></script>
+            <script type="text/javascript"
+                src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-ui/jquery-ui.min.js"></script>
+            <script type="text/javascript"
+                src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-qtip/jquery.qtip.min.js"></script>
+            <script type="text/javascript"
+                src="<?php echo base_url(); ?>/assets/appointment/ext/bootstrap/js/bootstrap.min.js"></script>
+            <script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/ext/datejs/date.js"></script>
+            <script type="text/javascript"
+                src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-jscrollpane/jquery.jscrollpane.min.js"></script>
+            <script type="text/javascript"
+                src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-mousewheel/jquery.mousewheel.js"></script>
+            
+            <link rel="stylesheet" type="text/css"
+                href="<?php echo base_url(); ?>/assets/appointment/ext/jquery-fullcalendar/jquery.fullcalendar.css" />
+            <script type="text/javascript"
+                src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-fullcalendar/jquery.fullcalendar.min.js"></script>
+            <script type="text/javascript"
+                src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-ui/jquery-ui-timepicker-addon.js"></script>
+            <script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/js/backend_calendar.js"></script>
+            <script type="text/javascript">
+                var GlobalVariables = {
+                    'csrfToken': <? php echo json_encode($this-> security -> get_csrf_hash()); ?>,
+                        'availableProviders'    : <? php echo json_encode($available_providers); ?>,
+                            'availableServices'     : <? php echo json_encode($available_services); ?>,
+                                'baseUrl'               : <? php echo '"'.$base_url. '"'; ?>,
+                                    'baseAPIUrl'               : <? php echo '"'.$base_url_api. '"'; ?>,
+                                        'bookAdvanceTimeout'    : <? php echo $book_advance_timeout; ?>,
+                                            'dateFormat'            : <? php echo json_encode($date_format); ?>,
+                                                'editAppointment'       : <? php echo json_encode($edit_appointment); ?>,
+                                                    'customers'             : <? php echo json_encode($customers); ?>,
+                                                        'secretaryProviders'    : <? php echo json_encode($secretary_providers); ?>,
+                                                            'user'                  : {
+                    'id'        : <? php echo $user_id; ?>,
+                        'email'     : <? php echo '"'.$user_email. '"'; ?>,
+                            'role_slug' : <? php echo '"'.$role_slug. '"'; ?>,
+                                'privileges': <? php echo json_encode($privileges); ?>
+                    }
+                };
+
+                $(document).ready(function () {
+                    BackendCalendar.initialize(true);
+                });
+            </script>
+            <style>
+                .ui-datepicker {
+                    position: relative;
+                    z-index: 10000 !important;
+                }
+            </style>
+            <!-- START BREADCRUMB -->
+            <ul class="breadcrumb push-down-0">
+                <li><a href="<?php echo base_url()." yogiccoach/";?>">Dashboard</a></li>
+                <li>Appointment Scheduler</li>
+                <li class="active">Calendar</li>
+            </ul>
+            <!-- END BREADCRUMB -->
+            <div id="error_container"></div>
+            <div class="content-frame" onload="deletnotifiction()">
+                <!-- START CONTENT FRAME TOP -->
+                <div class="content-frame-top hide">
+                    <div class="page-title"></div>
+                </div>
+                <!-- END CONTENT FRAME TOP -->
+                <!-- START CONTENT FRAME BODY -->
+                <div class="row1">
+                    <div class="col-md-12 text-center">
+            
+                        <div id="calendar-page">
+                            <div id="calendar-toolbar">
+                                <div id="calendar-filter" class="form-group form-inline ">
+                                    <label for="select-filter-item">
+                                        <?php echo $this->lang->line('display_calendar'); ?>
+                                    </label>
+                                    <select id="select-filter-item" class="form-control">
+                                        title="
+                                        <?php echo $this->lang->line('select_filter_item_hint'); ?>">
+                                    </select>
+                                </div>
+            
+                                <div id="calendar-actions">
+                                    <div class="btn-group">
+                                        <a href="https://calendar.google.com/" target="_blank"><img
+                                                src="<?php echo base_url();?>assets/img/google-calendar.jpg"
+                                                alt="Google Calendar" /></a>&nbsp;&nbsp;
+                                    </div>
+                                    <div class="btn-group">
+                                        <button id="reload-appointments" class="btn btn-default"
+                                            title="<?php echo $this->lang->line('reload_appointments_hint'); ?>">
+                                            <span class="glyphicon glyphicon-repeat"></span>
+                                            <?php echo $this->lang->line('reload'); ?>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button id="insert-appointment" class="btn btn-primary"
+                                            title="<?php echo $this->lang->line('new_appointment_hint'); ?>">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <?php echo $this->lang->line('appointment'); ?>
+                                        </button>
+                                        <button id="insert-unavailable" class="btn btn-default"
+                                            title="<?php echo $this->lang->line('unavailable_periods_hint'); ?>">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <?php echo $this->lang->line('unavailable'); ?>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <div id="calendar"></div>
+                            <?php // Main calendar container ?>
+                        </div>
+            
+                        <?php
+                        // --------------------------------------------------------------------
+                        //
+                        // MANAGE APPOINTMENT
+                        //
+                        // --------------------------------------------------------------------
+                        ?>
+                        <div id="manage-appointment" class="modal fades" data-keyboard="true" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="wrapper">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true">&times;</button>
+                                            <h3 class="modal-title">
+                                                <?php echo $this->lang->line('edit_appointment_title'); ?>
+                                            </h3>
+                                        </div>
+            
+                                        <div class="modal-body">
+                                            <div class="modal-message alert hidden"></div>
+                                            <div class="clearfix"></div>
+            
+                                            <form class="form-horizontal">
+                                                <fieldset class="">
+                                                    <legend>
+                                                        <?php echo $this->lang->line('appointment_details_title'); ?>
+                                                    </legend>
+            
+                                                    <input id="appointment-id" type="hidden" />
+            
+            
+                                                    <div class="form-group">
+                                                        <label for="select-service" class="col-sm-4 control-label"
+                                                            style="width: 160px">
+                                                            <?php echo $this->lang->line('service'); ?> *
+                                                        </label>
+                                                        <div class="col-sm-7">
+                                                            <select id="select-service" class="required form-control">
+                                                                <?php
+                                                                // Group services by category, only if there is at least one service
+                                                                // with a parent category.
+                                                                $has_category = FALSE;
+                                                                foreach($available_services as $service) {
+                                                                    if ($service['category_id'] != NULL) {
+                                                                        $has_category = TRUE;
+                                                                        break;
+                                                                    }
+                                                                }
+            
+                                                                if ($has_category) {
+                                                                    $grouped_services = array();
+            
+                                                                    foreach($available_services as $service) {
+                                                                        if ($service['category_id'] != NULL) {
+                                                                            if (!isset($grouped_services[$service['category_name']])) {
+                                                                                $grouped_services[$service['category_name']] = array();
+                                                                            }
+            
+                                                                            $grouped_services[$service['category_name']][] = $service;
+                                                                        }
+                                                                    }
+            
+                                                                    // We need the uncategorized services at the end of the list so
+                                                                    // we will use another iteration only for the uncategorized services.
+                                                                    $grouped_services['uncategorized'] = array();
+                                                                    foreach($available_services as $service) {
+                                                                        if ($service['category_id'] == NULL) {
+                                                                            $grouped_services['uncategorized'][] = $service;
+                                                                        }
+                                                                    }
+            
+                                                                    foreach($grouped_services as $key => $group) {
+                                                                        $group_label = ($key != 'uncategorized')
+                                                                            ? $group[0]['category_name'] : 'Uncategorized';
+            
+                                                                        if (count($group) > 0) {
+                                                                            echo '<optgroup label="' . $group_label . '">';
+                                                                            foreach($group as $service) {
+                                                                                echo '<option value="' . $service['id'] . '">'
+                                                                                    . $service['name'] . '</option>';
+                                                                            }
+                                                                            echo '</optgroup>';
+                                                                        }
+                                                                    }
+                                                                }  else {
+                                                                    foreach($available_services as $service) {
+                                                                        echo '<option value="' . $service['id'] . '">'
+                                                                            . $service['name'] . '</option>';
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+            
+                                                    <div class="form-group">
+                                                        <label for="select-customer" class="col-sm-5 control-label"
+                                                            style="width: 160px">Client *</label>
+                                                        <div class="col-md-7">
+                                                            <select id="select-customer" class="required form-control">
+                                                                <option value="">-Select Client-</option>
+                                                                <?php
+                                                                foreach($customers as $customer) {
+                                                                    echo '<option value="' . $customer['fld_id'] . '">'
+                                                                        . $customer['fld_first_name'] . ' ' .  $customer['fld_last_name'] . '</option>';
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+            
+                                                    <div class="form-group">
+                                                        <label for="start-datetime" class="col-sm-5 control-label"
+                                                            style="width: 160px">
+                                                            <?php echo $this->lang->line('start_date_time'); ?>
+                                                        </label>
+                                                        <div class="col-sm-7">
+                                                            <input type="text" id="start-datetime" class="form-control" />
+                                                        </div>
+                                                    </div>
+            
+                                                    <div class="form-group">
+                                                        <label for="end-datetime" class="control-label col-sm-3"
+                                                            style="width: 160px">
+                                                            <?php echo $this->lang->line('end_date_time'); ?>
+                                                        </label>
+                                                        <div class="col-sm-7">
+                                                            <input type="text" id="end-datetime" class="form-control" />
+                                                        </div>
+                                                    </div>
+            
+                                                    <div class="form-group">
+                                                        <label for="appointment-notes" class="control-label col-sm-3"
+                                                            style="width: 160px">
+                                                            <?php echo $this->lang->line('notes'); ?>
+                                                        </label>
+                                                        <div class="col-sm-7">
+                                                            <textarea id="appointment-notes" class="form-control"
+                                                                rows="3"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+            
+                                            </form>
+                                        </div>
+            
+                                    </div>
+                                    <div class="modal-footer footer">
+                                        <button id="save-appointment" class="btn btn-primary">
+                                            <?php echo $this->lang->line('save'); ?>
+                                        </button>
+                                        <button id="cancel-appointment" class="btn btn-default" data-dismiss="modal">
+                                            <?php echo $this->lang->line('cancel'); ?>
+                                        </button>
+            
+                                    </div>
+                                </div>
+            
+                            </div>
+                        </div>
+            
+                        <?php
+                        // --------------------------------------------------------------------
+                        //
+                        // MANAGE UNAVAILABLE
+                        //
+                        // --------------------------------------------------------------------
+                        ?>
+                        <div id="manage-unavailable" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+            
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h3 class="modal-title">
+                                            <?php echo $this->lang->line('new_unavailable_title'); ?>
+                                        </h3>
+                                    </div>
+            
+                                    <div class="modal-body">
+                                        <div class="modal-message alert hidden"></div>
+                                        <div class="clearfix"></div>
+            
+                                        <form class="form-horizontal">
+                                            <fieldset>
+                                                <input id="unavailable-id" type="hidden" />
+            
+                                                <div class="form-group">
+                                                    <label for="unavailable-start" class="control-label col-sm-3">
+                                                        <?php echo $this->lang->line('start'); ?>
+                                                    </label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" id="unavailable-start" class="form-control" />
+                                                    </div>
+                                                </div>
+            
+                                                <div class="form-group">
+                                                    <label for="unavailable-end" class="control-label col-sm-3">
+                                                        <?php echo $this->lang->line('end'); ?>
+                                                    </label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" id="unavailable-end" class="form-control" />
+                                                    </div>
+                                                </div>
+            
+                                                <div class="form-group">
+                                                    <label for="unavailable-notes" class="control-label col-sm-3">
+                                                        <?php echo $this->lang->line('notes'); ?>
+                                                    </label>
+                                                    <div class="col-sm-8">
+                                                        <textarea id="unavailable-notes" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+            
+                                    <div class="modal-footer">
+                                        <button id="save-unavailable" class="btn btn-primary">
+                                            <?php echo $this->lang->line('save'); ?>
+                                        </button>
+                                        <button id="cancel-unavailable" class="btn btn-default" data-dismiss="modal">
+                                            <?php echo $this->lang->line('cancel'); ?>
+                                        </button>
+                                    </div>
+            
+                                </div>
+                            </div>
+                        </div>
+            
+                        <?php
+                        // --------------------------------------------------------------------
+                        //
+                        // SELECT GOOGLE CALENDAR
+                        //
+                        // --------------------------------------------------------------------
+                        ?>
+                        <div id="select-google-calendar" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+            
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h3 class="modal-title">
+                                            <?php echo $this->lang->line('select_google_calendar'); ?>
+                                        </h3>
+                                    </div>
+            
+                                    <div class="modal-body">
+                                        <p>
+                                            <?php echo $this->lang->line('select_google_calendar_prompt'); ?>
+                                        </p>
+                                        <select id="google-calendar"></select>
+                                    </div>
+            
+                                    <div class="modal-footer">
+                                        <button id="select-calendar" class="btn btn-primary">
+                                            <?php echo $this->lang->line('select'); ?>
+                                        </button>
+                                        <button id="close-calendar" class="btn btn-default" data-dismiss="modal">
+                                            <?php echo $this->lang->line('close'); ?>
+                                        </button>
+                                    </div>
+            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            
+            
+            
+                </div>
+            
+            
+            
+            </div>
+            <script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/js/backend.js"></script>
+            <script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/js/general_functions.js"></script>
+            <script>
+                $(document).ready(function () {
+                    $.ajax({
+                        url: "<?php echo base_url(); ?>yogiccoach/delet_appointment_notifiction",
+                        success: function (result) {
+                        }
+                    });
+                });
+            </script>
+            <?php
+            $this->load->view('yogiccoach/footer');
+            ?>
+</xmp></code></pre>
+<p>In this page login three type of user.</p>
+<img class="img-fluid" src="image/appointmentservicecoach.png" alt="Login Page" height="100">
+<br><br>
+<p>Login page View</p>
+<code>application/views/site/login.php</code>
+<pre><code class="language-html"><xmp>public function appointment_services()
+{
+$this->lang->load('translations', $this->config->item('language'));
+$this->load->model('user_model');
+$this->load->model('services_model');
+$this->load->model('appointment_settings_model');
+
+
+$view['base_url'] = $this->config->item('base_url');
+$view['base_url_api'] = $this->config->item('base_url_api');
+$view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
+$view['active_menu'] = PRIV_SERVICES;
+$view['company_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
+$view['date_format'] = $this->appointment_settings_model->get_setting('date_format');
+$view['services'] = $this->services_model->get_batch();
+$view['categories'] = $this->services_model->get_all_categories();
+$this->set_user_data($view);
+
+
+$this->load->view('yogiccoach/appointment_services',$view);
+}</xmp></code></pre>
+<p>Appointment Service view</p>
+<code>application/views/yogiccoach/appointment_services.php</code>
+<pre><code class="language-html"><xmp><?php
+
+$this->load->view('yogiccoach/sidebar');
+
+?>
+<link rel="stylesheet" type="text/css"
+    href="<?php echo  base_url();  ?>/assets/appointment/ext/jquery-ui/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css"
+    href="<?php echo  base_url();  ?>/assets/appointment/ext/jquery-qtip/jquery.qtip.min.css">
+<link rel="stylesheet" type="text/css"
+    href="<?php echo  base_url();  ?>/assets/appointment/ext/jquery-jscrollpane/jquery.jscrollpane.css">
+<link rel="stylesheet" type="text/css" href="<?php echo  base_url();  ?>/assets/appointment/css/backend.css">
+<link rel="stylesheet" type="text/css" href="<?php echo  base_url();  ?>/assets/appointment/css/general.css">
+<script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/ext/datejs/date.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/ext/jquery/jquery.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-ui/jquery-ui.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-qtip/jquery.qtip.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>/assets/appointment/ext/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/ext/datejs/date.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-jscrollpane/jquery.jscrollpane.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>/assets/appointment/ext/jquery-mousewheel/jquery.mousewheel.js"></script>
+<script type="text/javascript">
+    // Global JavaScript Variables - Used in all backend pages.
+    var availableLanguages = <? php echo json_encode($this -> config -> item('available_languages')); ?>;
+    var EALang = <? php echo json_encode($this -> lang -> language); ?>;
+</script>
+<script type="text/javascript" src="<?php echo $base_url; ?>/assets/appointment/js/backend_services.js"></script>
+<script type="text/javascript">
+    var GlobalVariables = {
+        'csrfToken': <? php echo json_encode($this-> security -> get_csrf_hash()); ?>,
+            'baseUrl'       : <? php echo '"'.$base_url. '"'; ?>,
+                'baseAPIUrl'    : <? php echo '"'.$base_url_api. '"'; ?>,
+                    'dateFormat'    : <? php echo json_encode($date_format); ?>,
+                        'services'      : <? php echo json_encode($services); ?>,
+                            'categories'    : <? php echo json_encode($categories); ?>,
+                                'user'          : {
+        'id'        : <? php echo $user_id; ?>,
+            'email'     : <? php echo '"'.$user_email. '"'; ?>,
+                'role_slug' : <? php echo '"'.$role_slug. '"'; ?>,
+                    'privileges': <? php echo json_encode($privileges); ?>
+        }
+    };
+
+    $(document).ready(function () {
+        BackendServices.initialize(true);
+    });
+</script>
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb push-down-0">
+    <li><a href="<?php echo base_url()." yogiccoach/";?>">Dashboard</a></li>
+    <li>Appointment Scheduler</li>
+    <li><a href="<?php echo base_url()." yogiccoach/appointment_calendar";?>">Calendar</a></li>
+    <li class="active">Services</li>
+</ul>
+<!-- END BREADCRUMB -->
+<div id="error_container"></div>
+<div class="content-frame"">
+    <!-- START CONTENT FRAME TOP -->
+    <div class=" content-frame-top hide">
+    <div class="page-title"></div>
+</div>
+<div class="page-content-wrap">
+
+    <div class="row">
+        <div class="col-md-12">
+            <!-- START JUSTIFIED TABS -->
+            <div class="panel panel-default tabs">
+                <ul class="nav nav-tabs nav-justified" id="servicesTabs">
+                    <li class="services-tab tab active"><a href="#services" data-toggle="tab">Services</a></li>
+                    <li class="categories-tab tab"><a href="#categories" data-toggle="tab">Categories</a></li>
+                </ul>
+
+                <div class="panel-body tab-content" id="services-page">
+                    <div id="services" class="tab-pane active">
+                        <?php // FILTER SERVICES ?>
+                        <div class="row">
+                            <div id="filter-services" class="filter-records column col-md-4">
+                                <form class="input-append hidden">
+                                    <input class="key" type="text" />
+                                    <div class="btn-group">
+                                        <button class="filter btn btn-default btn-sm" type="submit"
+                                            title="<?php echo $this->lang->line('filter'); ?>">
+                                            <span
+                                                class="glyphglyphicon glyphicon glyphglyphicon glyphicon-search"></span>
+                                        </button>
+                                        <button class="clear btn btn-default btn-sm" type="button"
+                                            title="<?php echo $this->lang->line('clear'); ?>">
+                                            <span
+                                                class="glyphglyphicon glyphicon glyphglyphicon glyphicon-repeat"></span>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <h3>
+                                    <?php echo $this->lang->line('services'); ?>
+                                </h3>
+                                <div class="results"></div>
+                            </div>
+
+                            <div class="details column col-md-7">
+                                <div class="btn-toolbar">
+                                    <div class="add-edit-delete-group btn-group">
+                                        <button id="add-service" class="btn btn-primary">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <?php echo $this->lang->line('add'); ?>
+                                        </button>
+                                        <button id="edit-service" class="btn btn-default" disabled="disabled">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                            <?php echo $this->lang->line('edit'); ?>
+                                        </button>
+                                        <button id="delete-service" class="btn btn-default" disabled="disabled">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                            <?php echo $this->lang->line('delete'); ?>
+                                        </button>
+                                    </div>
+
+                                    <div class="save-cancel-group btn-group" style="display:none;">
+                                        <button id="save-service" class="btn btn-primary">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                            <?php echo $this->lang->line('save'); ?>
+                                        </button>
+                                        <button id="cancel-service" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-ban-circle"></span>
+                                            <?php echo $this->lang->line('cancel'); ?>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <h3>
+                                    <?php echo $this->lang->line('details'); ?>
+                                </h3>
+                                <div class="form-message alert" style="display:none;"></div>
+
+                                <input type="hidden" id="service-id" />
+
+                                <div class="form-group">
+                                    <label for="service-name">
+                                        <?php echo $this->lang->line('name'); ?> *
+                                    </label>
+                                    <input type="text" id="service-name" class="form-control required" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="service-duration">
+                                        <?php echo $this->lang->line('duration_minutes'); ?> *
+                                    </label>
+                                    <input type="number" id="service-duration" class="form-control required" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="service-price">
+                                        <?php echo $this->lang->line('price'); ?> *
+                                    </label>
+                                    <input type="text" id="service-price" class="form-control required"
+                                        style="width: 180px" />
+                                </div>
+
+                                <!-- <div class="form-group">
+                    <label for="service-currency"><?php echo $this->lang->line('currency'); ?></label> -->
+                                <input type="hidden" id="service-currency" class="form-control" style="width: 150px"
+                                    value="$" />
+                                <!-- </div> -->
+
+                                <div class="form-group">
+                                    <label for="service-category">
+                                        <?php echo $this->lang->line('category'); ?>
+                                    </label>
+                                    <select id="service-category" class="form-control"></select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="service-description">
+                                        <?php echo $this->lang->line('description'); ?>
+                                    </label>
+                                    <textarea id="service-description" rows="4" class="form-control"></textarea>
+                                </div>
+
+
+                                <br /><br />
+                                <em id="form-message" class="text-error">
+                                    <?php echo $this->lang->line('fields_are_required'); ?>
+                                </em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php
+                            // --------------------------------------------------------------
+                            //
+                            // CATEGORIES TAB
+                            //
+                            // --------------------------------------------------------------
+                            ?>
+                    <div id="categories" class="tab-pane" style="">
+                        <div class="row">
+                            <div id="filter-categories" class="filter-records column col-md-4">
+                                <form class="input-append hide">
+                                    <input class="key" type="text" />
+                                    <div class="btn-group">
+                                        <button class="filter btn btn-default btn-sm" type="submit"
+                                            title="<?php echo $this->lang->line('filter'); ?>">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                        <button class="clear btn btn-default btn-sm" type="button"
+                                            title="<?php echo $this->lang->line('clear'); ?>">
+                                            <span class="glyphicon glyphicon-repeat"></span>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <h3>
+                                    <?php echo $this->lang->line('categories'); ?>
+                                </h3>
+                                <div class="results"></div>
+                            </div>
+
+                            <div class="details col-md-7">
+                                <div class="btn-toolbar">
+                                    <div class="add-edit-delete-group btn-group">
+                                        <button id="add-category" class="btn btn-primary">
+                                            <span class="glyphicon glyphicon-plus glyphicon glyphicon-white"></span>
+                                            <?php echo $this->lang->line('add'); ?>
+                                        </button>
+                                        <button id="edit-category" class="btn btn-default" disabled="disabled">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                            <?php echo $this->lang->line('edit'); ?>
+                                        </button>
+                                        <button id="delete-category" class="btn btn-default" disabled="disabled">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                            <?php echo $this->lang->line('delete'); ?>
+                                        </button>
+                                    </div>
+
+                                    <div class="save-cancel-group btn-group" style="display:none;">
+                                        <button id="save-category" class="btn btn-primary">
+                                            <span class="glyphicon glyphicon-ok glyphicon glyphicon-white"></span>
+                                            <?php echo $this->lang->line('save'); ?>
+                                        </button>
+                                        <button id="cancel-category" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-ban-circle"></span>
+                                            <?php echo $this->lang->line('cancel'); ?>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <h3>
+                                    <?php echo $this->lang->line('details'); ?>
+                                </h3>
+                                <div class="form-message alert" style="display:none;"></div>
+
+                                <input type="hidden" id="category-id" />
+
+                                <div class="form-group">
+                                    <label for="category-name">
+                                        <?php echo $this->lang->line('name'); ?> *
+                                    </label>
+                                    <input type="text" id="category-name" class="form-control required" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="category-description">
+                                        <?php echo $this->lang->line('description'); ?>
+                                    </label>
+                                    <textarea id="category-description" rows="4" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/js/backend.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/js/general_functions.js"></script>
+<?php
+$this->load->view('yogiccoach/footer');
+?>
+</xmp></code></pre>
+<p>Appointment Setting</p>
+<img class="img-fluid" src="image/appointmentsettingcoach .png" alt="Login Page" height="100">
+<br><br>
+<p>appointment setting controller</p>
+<code>application/controller/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function appointment_settings()
+{
+$this->lang->load('translations', $this->config->item('language'));
+
+$this->load->model('appointment_settings_model');
+$this->load->model('coach_model');
+$this->load->model('services_model');
+$this->load->model('user_model');
+
+$view['base_url'] = $this->config->item('base_url');
+$view['base_url_api'] = $this->config->item('base_url_api');
+$view['user_display_name'] = $this->coach_model->get_user_display_name($this->userid);
+$view['active_menu'] = PRIV_USERS;
+$view['company_name'] = $this->coach_model->get_user_display_name($this->userid);
+$view['date_format'] = $this->appointment_settings_model->get_setting('date_format');
+//$view['admins'] = array();
+//$view['providers'] = $this->coach_model->get_coach_details($this->userid);
+//$view['secretaries'] = array();
+//$view['services'] = $this->services_model->get_available_services($this->userid);
+//$view['working_plan'] = $this->appointment_settings_model->get_setting('company_working_plan');
+$system_settings = $this->appointment_settings_model->get_settings();
+$user_settings = $this->coach_model->get_settings($this->userid);
+foreach ($system_settings as $key => $system_setting) {
+if($system_setting['name'] == "company_working_plan") {
+$system_settings[$key]['value'] = $user_settings['settings']['working_plan'];
+}
+}
+$view['system_settings'] = $system_settings;
+$view['user_settings'] = $user_settings;
+$this->set_user_data($view);
+
+$this->load->view('yogiccoach/appointment_settings',$view);
+}</xmp></code></pre>
+<p>appointment setting view</p>
+<code>application/views/yogicccoach/appointment_settings.php</code>
+<pre><code class="language-html"><xmp><?php
+
+$this->load->view('yogiccoach/sidebar');
+?>
+<link rel="stylesheet" type="text/css"
+    href="<?php echo  base_url();  ?>assets/appointment/ext/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+    href="<?php echo  base_url();  ?>assets/appointment/ext/jquery-ui/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css"
+    href="<?php echo  base_url();  ?>assets/appointment/ext/jquery-qtip/jquery.qtip.min.css">
+<link rel="stylesheet" type="text/css"
+    href="<?php echo  base_url();  ?>assets/appointment/ext/jquery-jscrollpane/jquery.jscrollpane.css">
+<link rel="stylesheet" type="text/css" href="<?php echo  base_url();  ?>assets/appointment/css/backend.css">
+<link rel="stylesheet" type="text/css" href="<?php echo  base_url();  ?>assets/appointment/css/general.css">
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/appointment/ext/datejs/date.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/appointment/ext/jquery/jquery.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>assets/appointment/ext/jquery-ui/jquery-ui.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>assets/appointment/ext/jquery-qtip/jquery.qtip.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>assets/appointment/ext/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/appointment/ext/datejs/date.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>assets/appointment/ext/jquery-jscrollpane/jquery.jscrollpane.min.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url(); ?>assets/appointment/ext/jquery-mousewheel/jquery.mousewheel.js"></script>
+
+<script type="text/javascript" src="<?php echo base_url() ?>assets/appointment/js/backend_settings.js"></script>
+<script type="text/javascript" src="<?php echo base_url() ?>assets/appointment/js/working_plan.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url() ?>assets/appointment/ext/jquery-ui/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript"
+    src="<?php echo base_url() ?>assets/appointment/ext/jquery-jeditable/jquery.jeditable.min.js"></script>
+
+<script type="text/javascript">
+    // Global JavaScript Variables - Used in all backend pages.
+    var availableLanguages = <? php echo json_encode($this -> config -> item('available_languages')); ?>;
+    var EALang = <? php echo json_encode($this -> lang -> language); ?>;
+</script>
+<script type="text/javascript">
+    var GlobalVariables = {
+        'csrfToken': <? php echo json_encode($this-> security -> get_csrf_hash()); ?>,
+            'baseUrl'       : <? php echo '"'.$base_url. '"'; ?>,
+                'baseAPIUrl'    : <? php echo '"'.$base_url_api. '"'; ?>,
+                    'dateFormat'    : <? php echo json_encode($date_format); ?>,
+                        'settings'      : {
+        'system'    : <? php echo json_encode($system_settings); ?>,
+            'user'      : <? php echo json_encode($user_settings); ?>
+            },
+    'user'          : {
+        'id'        : <? php echo $user_id; ?>,
+            'email'     : <? php echo '"'.$user_email. '"'; ?>,
+                'role_slug' : <? php echo '"'.$role_slug. '"'; ?>,
+                    'privileges': <? php echo json_encode($privileges); ?>
+            }
+        };
+
+    $(document).ready(function () {
+        BackendSettings.initialize(true);
+
+    });
+</script>
+
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb push-down-0">
+    <li><a href="<?php echo base_url()." yogiccoach/";?>">Dashboard</a></li>
+    <li>Appointment Scheduler</li>
+    <li><a href="<?php echo base_url()." yogiccoach/appointment_calendar";?>">Calendar</a></li>
+    <li class="active">Settings</li>
+</ul>
+<!-- END BREADCRUMB -->
+
+<div id="error_container"></div>
+<div class="content-frame">
+    <!-- START CONTENT FRAME TOP -->
+    <div class="content-frame-top hide">
+        <div class="page-title"></div>
+    </div>
+    <div id="business-logic" class="page-content-wrap">
+        <div class="col-md-12">
+            <div id="notification" style="display: none;"></div>
+            <form>
+                <!-- START JUSTIFIED TABS -->
+                <div class="panel panel-default tabs">
+
+                    <div class="panel-body">
+
+                        <fieldset>
+                            <legend>
+                                Settings
+                                <button type="button" id="save-provider" class="save-settings btn btn-primary"
+                                    style="margin:0px 150px 10px" title="<?php echo $this->lang->line('save'); ?>">
+                                    Save Settings
+                                </button>
+                            </legend>
+
+
+                            <div class="row-fluid">
+                                <div class="col-md-7 working-plan-wrapper">
+                                    <div class="working-plan-view provider-view">
+                                        <h3>
+                                            <?php echo $this->lang->line('working_plan'); ?>
+
+                                        </h3>
+                                        <table class="working-plan table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <?php echo $this->lang->line('day'); ?>
+                                                    </th>
+                                                    <th>
+                                                        <?php echo $this->lang->line('start'); ?>
+                                                    </th>
+                                                    <th>
+                                                        <?php echo $this->lang->line('end'); ?>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" id="monday" />
+                                                                <?php echo $this->lang->line('monday'); ?>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" id="monday-start" class="work-start" /></td>
+                                                    <td><input type="text" id="monday-end" class="work-end" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" id="tuesday" />
+                                                                <?php echo $this->lang->line('tuesday'); ?>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" id="tuesday-start" class="work-start " />
+                                                    </td>
+                                                    <td><input type="text" id="tuesday-end" class="work-end " /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" id="wednesday" />
+                                                                <?php echo $this->lang->line('wednesday'); ?>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" id="wednesday-start" class="work-start" />
+                                                    </td>
+                                                    <td><input type="text" id="wednesday-end" class="work-end" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" id="thursday" />
+                                                                <?php echo $this->lang->line('thursday'); ?>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" id="thursday-start" class="work-start" />
+                                                    </td>
+                                                    <td><input type="text" id="thursday-end" class="work-end" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" id="friday" />
+                                                                <?php echo $this->lang->line('friday'); ?>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" id="friday-start" class="work-start" /></td>
+                                                    <td><input type="text" id="friday-end" class="work-end" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" id="saturday" />
+                                                                <?php echo $this->lang->line('saturday'); ?>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" id="saturday-start" class="work-start" />
+                                                    </td>
+                                                    <td><input type="text" id="saturday-end" class="work-end" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="checkbox">
+                                                            <label><input type="checkbox" id="sunday" />
+                                                                <?php echo $this->lang->line('sunday'); ?>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" id="sunday-start" class="work-start" /></td>
+                                                    <td><input type="text" id="sunday-end" class="work-end" /></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-5 breaks-wrapper">
+                                    <h4>
+                                        <?php echo $this->lang->line('breaks'); ?>
+                                        <button type="button" class="add-break btn btn-primary pull-right"
+                                            style="margin:0 10px 10px">
+                                            <span class="glyphicon glyphicon-white glyphicon glyphicon-plus"></span>
+                                            <?php echo $this->lang->line('add_break');?>
+                                        </button>
+                                    </h4>
+
+
+                                    <table class="breaks table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <?php echo $this->lang->line('day'); ?>
+                                                </th>
+                                                <th>
+                                                    <?php echo $this->lang->line('start'); ?>
+                                                </th>
+                                                <th>
+                                                    <?php echo $this->lang->line('end'); ?>
+                                                </th>
+                                                <th>
+                                                    <?php echo $this->lang->line('actions'); ?>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<!-- <div id="loading" style="display: none;">
+        <img src="<?php echo base_url() ?>assets/appointment/img/loading.gif" />
+    </div> -->
+
+</div>
+<script type="text/javascript" src="<?php echo base_url() ?>/assets/appointment/js/backend.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>/assets/appointment/js/general_functions.js"></script>
+<?php
+$this->load->view('yogiccoach/footer');
+</xmp></code></pre>
+<p>Message/chat</p>
+<img class="img-fluid" src="image/messagecoach.png" alt="Login Page" height="100">
+<br><br>
+<p>message controller</p>
+<code>application/controllers/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function messages($member_id=0)
+{ $data['member_id']=$member_id;
+
+$this->load->view('yogiccoach/messages',$data);
+}
+public function send_text_message(){
+
+$messageTxt = $_POST['messageTxt'];
+$sender_id = $this->userid;
+$receiver_id = $_POST['receiver_id'];
+$date = date('Y-m-d H:i:s');
+$ip_address = $this->input->ip_address();
+
+$res = "INSERT INTO `mys_chat`(`sender_id`, `receiver_id`, `massage`, `message_date_time`, `ip_address`) VALUES
+('$sender_id','$receiver_id','$messageTxt' ,'$date','$ip_address')";
+$this->db->query($res);
+}
+
+public function get_chat_history(){
+
+$receiver_id = $_POST['receiver_id'];
+$senderid = $this->userid;
+$Logged_sender_id = $this->userid;
+
+
+$query =$this->db->query("SELECT * FROM `mys_chat` WHERE `sender_id`= '$senderid' AND `receiver_id` = '$receiver_id' OR
+`sender_id`= '$receiver_id' AND `receiver_id` = '$senderid' ORDER BY `fld_id`");
+
+$history = $query->result_array();
+// print_r($history);
+// exit();
+foreach($history as $chat):
+
+$message_id = $chat['fld_id'];
+$sender_id = $chat['sender_id'];
+
+$userData = $this->db->get_where('users',array('fld_id'=> $sender_id));
+if ($userData->num_rows()>0) {
+$userRow = $userData->row_array();
+$image_path=($userRow['fld_file_name']!='')?$userRow['fld_file_name']:'assets/images/user_thumb.png';
+$image = base_url().$image_path;
+}
+
+
+$this->load->model('user_model');
+$sendername = $this->user_model->GetName($chat['sender_id']);
+$messageBody = $chat['massage'];
+$messagedatetime = date('d M H:i A',strtotime($chat['message_date_time']));
+
+if($Logged_sender_id!=$sender_id){ ?>
+<!-- Message. Default to the left -->
+<div class="chat friend">
+    <div class="chats">
+        <div class="user-photo"><img src="<?php echo $image ?>" alt="John Doe" /></div>
+        <p class="chat-massage">
+            <?=$messageBody;?><br><span class="username">
+                <?=$sendername?>
+                <?=$messagedatetime;?>
+            </span>
+        </p>
+    </div>
+</div>
+<!-- /.direct-chat-msg -->
+<?php }else{?>
+<!-- Message to the right -->
+<div class="chat self">
+    <div class="chates">
+        <div class="user-photo"><img src="<?php echo $image ?>" alt="John Doe" /></div>
+        <p class="chat-massage">
+            <?=$messageBody;?><br><span class="username">
+                <?=$sendername?>
+                <?=$messagedatetime;?>
+            </span>
+        </p>
+    </div>
+</div>
+<!-- /.direct-chat-msg -->
+<?php }
+			endforeach;				
+			$this->db->where(array('receiver_id' => $senderid,  'sender_id' =>$receiver_id));
+			$this->db->set("status","1");
+			$this->db->update("chat");
+	}   
+
+
+	public function delet_chat(){
+		$receiver_id = $_POST['receiver_id'];
+		$senderid = $this->userid;
+
+		$query =$this->db->query("SELECT * FROM `mys_chat` WHERE `sender_id`= '$senderid' AND `receiver_id` = '$receiver_id' OR `sender_id`= '$receiver_id' AND `receiver_id` = '$senderid'");
+
+		$history = $query->result_array();
+		$date = date('d');
+		// print_r($history);
+		// exit();
+		foreach($history as $chat):
+			
+			$message_id = $chat['id'];
+			$sender_id = $chat['sender_id'];
+	
+			$this->load->model('user_model');
+			$sendername = $this->user_model->GetName($chat['sender_id']);
+			$messageBody = $chat['massage'];
+			$messagedatetime = date('d',strtotime($chat['message_date_time']));
+			
+			if ($messagedatetime < $date) {
+				$diffDays = abs($date - $messagedatetime);
+				if($diffDays > '30'){
+					$this->db->delete('mys_chat', array('id' => $message_id));
+				}
+			}
+			endforeach;	
+	}
+</xmp></code></pre>
+<p>message View</p>
+<code>application/views/yogiccoach/messages.php</code>
+<pre><code class="language-html"><xmp><?php
+ $noImg=base_url().'assets/images/user_thumb.png';
+ $this->load->view('yogiccoach/sidebar');
+ error_reporting(0);
+ $session=$this->session->get_userdata();
+ $user_id=$session['user_id'];
+
+ $this->db->order_by("fld_id", "desc");
+ $this->db->where('fld_user_type','admin');
+
+ $getAdminData=$this->db->get('users');
+ $this->db->order_by("fld_id", "desc");
+
+ $this->db->where('fld_parent', $user_id); 
+ $getData=$this->db->get('users');
+ $member_id;
+  if($getData->num_rows()>0) {
+	  foreach($getData->result() as $getRow){
+		// print_r($getRow); 
+	    // print_r($member_id=$getRow->fld_id);
+	  }
+  }	 
+ $cuttime = date('Y-m-d H:i:s',strtotime('-10second'));
+  
+ ?>
+<div id="callincoming"></div>
+<audio id="myAudio">
+    <source src="horse.ogg" type="audio/ogg">
+    <source src="<?= base_url('assets/audio/skype-27014.mp3') ?>" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb push-down-0">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Pages</a></li>
+    <li class="active">Messages</li>
+</ul>
+<!-- END BREADCRUMB -->
+
+<!-- START CONTENT FRAME -->
+<div class="content-frame">
+    <!-- START CONTENT FRAME TOP -->
+    <div class="content-frame-top">
+        <div class="page-title">
+            <h2><span class="fa fa-comments"></span> Messages</h2>
+            <!-- <a href="skype:USERNAME?chat">Chat with Skype</a> -->
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-default content-frame-right-toggle"><span class="fa fa-bars"></span></button>
+        </div>
+    </div>
+    <!-- END CONTENT FRAME TOP -->
+
+
+    <!-- START CONTENT FRAME BODY -->
+    <div class="content-frame-right">
+        <div class="list-group list-group-contacts border-bottom push-down-10">
+            <ul class="users-list">
+                <?php
+        if($getData->num_rows()>0) {
+            foreach($getData->result() as $getRow){ 
+                 $this->db->limit(1);
+            $this->db->order_by("ustatus", "desc"); 
+            $this->db->where(array('user_id'=>$getRow->fld_id));
+            $active=$this->db->get('status');
+            foreach($active->result() as $act){
+            $current = $date = date('Y-m-d H:i:s', $act->ustatus);
+            if ($current > $cuttime) {
+                    $status = "<span class='btn btn-success'>online</span>";
+                }else{
+                    $status = "<span class='btn btn-danger'>Offline</span>";
+                }
+             }
+                ?>
+                <li class="selectVendor" id="<?=$getRow->fld_id;?>"
+                    title="<?php echo $getRow->fld_username.'&nbsp;'; echo $getRow->fld_last_name; ?>">
+                    <a href="#" class="list-group-item">
+                        <img src="<?php $image_path=$getRow->fld_file_name; $image = base_url().$image_path; if(!empty($image_path)){echo $image;}else{ echo $noImg;} ?>"
+                            class="pull-left" alt="Dmitry Ivaniuk">
+                        <span class="contacts-title">
+                            <?php echo $getRow->fld_username.'&nbsp;'; echo $getRow->fld_last_name; ?>
+                        </span>
+                        <p>
+                            <?=$status?>
+                        </p>
+                    </a>
+                </li>
+                <?php } }else{ ?>
+                <li>
+                    <a class="users-list-name" href="#">No Vendor's Find...</a>
+                </li>
+                <?php }  if($getAdminData->num_rows()>0){
+                foreach($getAdminData->result() as $adminData){ 
+                    $this->db->limit(1);
+            $this->db->order_by("ustatus", "desc"); 
+            $this->db->where(array('user_id'=>$adminData->fld_id));
+            $actives=$this->db->get('status');
+            foreach($actives->result() as $acts){
+            // $current = $act->ustatus;
+            $current = date('Y-m-d H:i:s', $acts->ustatus);
+            if ($current > $cuttime) {
+                    $statuss = "<span class='btn btn-success'>online</span>";
+                }else{
+                    $statuss = "<span class='btn btn-danger'>Offline</span>";
+                }
+             }
+                    ?>
+                <h3>Admin</h3>
+                <li class="selectVendor" id="<?=$adminData->fld_id;?>"
+                    title="<?php echo $adminData->fld_username.'&nbsp;'; echo $adminData->fld_last_name; ?>">
+                    <a href="#" class="list-group-item">
+                        <img src="<?php $image_path=$adminData->fld_file_name; $image = base_url().$image_path; if(!empty($image_path)){echo $image;}else{ echo $noImg;} ?>"
+                            class="pull-left" alt="Dmitry Ivaniuk">
+                        <span class="contacts-title">
+                            <?php echo $adminData->fld_username.'&nbsp;'; echo $adminData->fld_last_name; ?>
+                        </span>
+                        <p>
+                            <?= $statuss ?>
+                        </p>
+                    </a>
+                </li>
+                <?php }}else{ ?>
+                <li>
+                    <a class="users-list-name" href="#">No Vendor's Find...</a>
+                </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-frame-body content-frame-body-left">
+        <div class="chatbox">
+            <div class="chatlogs">
+                <div id="ReciverName_txt"></div>
+                <div id="dumppy"></div>
+                <div id="selectcontent" style="text-align: center;font-size: 50px;">please select admin/client</div>
+            </div>
+            <input type="hidden" id="Sender_Name" value="<?=$memberName;?>">
+            <input type="hidden" id="ReciverId_txt">
+            <div class="chat-from">
+                <textarea></textarea>
+                <button class="submit">Send</button>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE CONTENT FRAME -->
+
+    <script>
+        $(function () {
+
+
+            $('textarea').keypress(function (event) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    sendTxtMessage($(this).val());
+                }
+            });
+            $('.submit').click(function () {
+                sendTxtMessage($('textarea').val());
+            });
+            $('.selectVendor').click(function () {
+                ChatSection(1);
+                var receiver_id = $(this).attr('id');
+                //alert(receiver_id);
+                $('#ReciverId_txt').val(receiver_id);
+                $('#ReciverName_txt').html($(this).attr('title'));
+
+                GetChatHistory(receiver_id);
+                deletchat(receiver_id);
+
+            });
+        });
+
+        function sendTxtMessage(message) {
+            var messageTxt = message.trim();
+            if (messageTxt != '') {
+                //console.log(message);
+                DisplayMessage(messageTxt);
+
+                var receiver_id = $('#ReciverId_txt').val();
+                $.ajax({
+                    url: home_url + 'yogiccoach/send_text_message',
+                    type: 'post',
+                    data: { messageTxt: messageTxt, receiver_id: receiver_id },
+                    dataType: "text",
+                    success: function (data) {
+                        // console.log();
+                        GetChatHistory(receiver_id)
+                    },
+                    error: function (jqXHR, status, err) {
+                        // alert('Local error callback');
+                    },
+                });
+
+                var height = 0;
+                $('.chatlogs div').each(function (i, value) {
+                    height += parseInt($(this).height());
+                });
+
+                height += '';
+
+                $('.chatlogs').animate({ scrollTop: height });
+                // $(".chatlogs").animate({ scrollTop: $(document).height() }, "fast");
+                $('textarea').val('');
+                $('textarea').focus();
+            } else {
+                $('textarea').focus();
+            }
+        }
+
+        function deletchat(receiver_id) {
+            // alert(receiver_id);
+            $.ajax({
+                type: "post",
+                dataType: "html",
+                url: home_url + 'Member/delet_chat',
+                data: { receiver_id: receiver_id },
+                success: function (data) {
+                    // console.log(data);
+                }
+            });
+        }
+
+        function GetChatHistory(receiver_id) {
+            // alert(receiver_id);
+            $.ajax({
+                type: "post",
+                dataType: "text",
+                url: home_url + 'yogiccoach/get_chat_history',
+                data: { receiver_id: receiver_id },
+                success: function (data) {
+                    // console.log(data);
+                    $('#selectcontent').html("");
+                    $('#dumppy').html(data);
+                    var height = 0;
+                    $('.chatlogs div').each(function (i, value) {
+                        height += parseInt($(this).height());
+                    });
+
+                    height += '';
+
+                    $('.chatlogs').animate({ scrollTop: height });
+                    // $(".chatlogs").animate({ scrollTop: $(document).height() }, "fast");
+                },
+                error: function (jqXHR, status, err) {
+                    // alert('Local error callback');
+                }
+            });
+        }
+
+
+        setInterval(function () {
+            var receiver_id = $('#ReciverId_txt').val();
+            if (receiver_id != '') { GetChatHistory(receiver_id); }
+        }, 3000);
+
+        function DisplayMessage(message) {
+            var Sender_Name = $('#Sender_Name').val();
+            var d = new Date();
+            d.setDate(d.getDate() + 50);
+            var str = '<div class="chat self">';
+            str += '<div class="user-photo"><img src="<?php echo base_url('assets / images / user_thumb.png')?>" alt="John Doe"/></div>';
+            str += '<p class="chat-massage">' + message;
+            str += '<br><span class="username" >' + Sender_Name + ' ' + d;
+            str += '</p></div>';
+            $('#dumppy').append(str);
+        }
+
+
+        function ChatSection(status) {
+            //chatSection
+            if (status == 0) {
+                $('.chatbox :input').attr('disabled', true);
+            } else {
+                $('.chatbox :input').removeAttr('disabled');
+            }
+        }
+        ChatSection(0);
+    </script>
+
+
+    <style>
+        #ReciverName_txt {
+            color: #fff;
+            text-align: center;
+            font-weight: bolder;
+            background: #2E4053;
+            font-size: 20px;
+            padding: 20px 0;
+            margin: 0 50px 10px 55px;
+            border-radius: 10px;
+        }
+
+        .select_id {
+            width: 60px;
+            height: 60px;
+            background-color: #ccc;
+            border-radius: 50%;
+            overflow: hidden;
+
+        }
+
+        .select_id img {
+            width: 100%;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        .chatbox {
+            /*width:100%;*/
+            min-width: 390px;
+            height: 600px;
+            background-color: #eae9e9;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 3px #ccc;
+
+        }
+
+        .chatlogs {
+            height: 450px;
+            background: #fff;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        .users-list {
+            height: 450px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        .chatlogs::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .chatlogs::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background: rgba(0, 0, 0, .1);
+        }
+
+        .chat {
+            width: 105%;
+        }
+
+        .chats {
+            width: 60%;
+            display: flex;
+            flex-flow: row wrap;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .chates {
+            width: 60%;
+            display: flex;
+            flex-flow: row wrap;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            float: right;
+        }
+
+        .chat .user-photo {
+            width: 40px;
+            height: 40px;
+            background-color: #ccc;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .chat .user-photo img {
+            width: 100%;
+        }
+
+        .chat .chat-massage {
+            width: 70%;
+            padding: 15px;
+            margin: 20px 10px 0;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .friend .chat-massage {
+            background-color: #F4F6F7;
+            color: #000;
+            text-align: left;
+            border-radius: 0px 20px 20px 20px;
+            padding: 5px;
+        }
+
+        .friend .user-photo {
+            margin-left: 20px;
+        }
+
+        .self .chat-massage {
+            background-color: #707B7C;
+            order: -1;
+            text-align: right;
+            border-radius: 20px 0 20px 20px;
+            padding: 5px;
+        }
+
+        .chat-from {
+            margin-top: 30px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .chat-from textarea {
+            background: #fbfbfb;
+            width: 90%;
+            height: 50px;
+            border: 2px solid #2d3945;
+            border-right: none;
+            resize: none;
+            border-radius: 5px 0 0 5px;
+            padding: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .chat-from textarea::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .chat-from textarea::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background: rgba(0, 0, 0, .1);
+        }
+
+        .chat-from textarea:focus {
+            background-color: #fff;
+        }
+
+        .chat-from button {
+            background-color: #2d3945;
+            padding: 4px 15px;
+            border-radius: 0 5px 5px 0;
+            font-size: 30px;
+            color: #fff;
+            border: none;
+        }
+
+        .friend .username {
+            font-size: 8px;
+            color: #cccccc;
+        }
+
+        .self .username {
+            font-size: 8px;
+            color: #f2f2f2;
+        }
+    </style>
+
+    <!-- START SCRIPTS -->
+    <!-- START PLUGINS -->
+    <script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery - ui.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / bootstrap / bootstrap.min.js"></script>
+    <!-- END PLUGINS -->
+
+    <!-- THIS PAGE PLUGINS -->
+    <script type='text/javascript' src='<?php echo base_url()."assets/";?>js/plugins/icheck/icheck.min.js'></script>
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / mcustomscrollbar / jquery.mCustomScrollbar.min.js"></script>
+    <!-- END PAGE PLUGINS -->
+
+    <!-- START TEMPLATE -->
+
+    <script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins.js"></script>
+    <!--<script type="text/javascript" src="<?php echo base_url()."assets/";?>js/actions.js"></script>-->
+    <!-- END TEMPLATE -->
+    <!-- END SCRIPTS -->
+    <style>
+        .img-box {
+            padding: 16px 20px;
+            border: 1px solid #ddd;
+            position: relative;
+            display: inline-block
+        }
+
+        .img-box .file_link {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            z-index: 1;
+            font-size: 14px;
+        }
+
+        .img-box1 {
+            padding: 16px 21px;
+            border: 1px solid #ddd;
+            display: inline-block;
+            position: relative;
+        }
+
+        .img-box1 img {
+            position: absolute;
+            left: 10px;
+            top: 7px;
+            z-index: 1;
+            font-size: 14px;
+        }
+    </style>
+    <?php
+ $this->load->view('yogiccoach/footer');
+ ?>
+</xmp></code></pre>
+<p>Payment</p>
+<img class="img-fluid" src="image/paymentcoach.png" alt="Login Page" height="100">
+<br><br>
+<p>payment controller</p>
+<code>application/controllers/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function payments(){
+$this->db->order_by("fld_id", "desc");
+$Payments = $this->db->get_where("payments",array("fld_user_id"=>$this->userid));
+$Profiles = $this->db->get_where("payment_profile",array("fld_user_id"=>$this->userid));
+$data = array(
+"payments" => $Payments->result(),
+"profiles" => $Profiles->result()
+);
+$this->load->view("yogiccoach/payments",$data);
+}
+public function ajax_list(){
+
+$list = $this->db->get_where('payment',array('fld_parent_id'=>$this->userid))->result();
+$data = array();
+$no = 0;
+foreach ($list as $purchase_view) {
+$no++;
+$this->load->model('user_model');
+$sendername = $this->user_model->GetName($purchase_view->fld_client_id);
+if($purchase_view->fld_status != 1)
+{
+$lblCSS ="label-default";
+$status ="Not Paid";
+}else
+{
+$lblCSS ="label-warning";
+$status ="Paid";
+}
+$row = array();
+$row[] = $no;
+$row[] = $purchase_view->fld_date;
+$row[] = $sendername;
+$row[] = $purchase_view->fld_product_name;
+$row[] = $purchase_view->fld_product_description;
+$row[] = $purchase_view->fld_total_payment;
+$row[] = $purchase_view->fld_promo;
+$row[] = $purchase_view->fld_invoice;
+$row[] = "<span class='label {$lblCSS}'>{$status}</span>";
+$row[] = '<div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        Action <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a href="'.base_url(" yogiccoach/edit_purchase/".$purchase_view->fld_id).'"> <i
+                    class="glyphicon glyphicon-edit"></i> Edit</a></li>
+        <li><button type="button" onclick="javascript:payment_edit('.$purchase_view->fld_id.');"
+                title="Download Report PDF"><i class="glyphicon glyphicon-save"></i> Payment</button></li>
+        <li><button type="button" onclick="javascript:payment_send(this);" title"Send Report PDF"
+                data-id="'.$purchase_view->fld_client_id.'" data-name="'.$purchase_view->fld_id.'"><i
+                    class="glyphicon glyphicon-print"></i> Print</button></li>
+        <li><a type="button" id="removeOrderModalBtn" onclick="purchase_cancel('."'".$purchase_view->fld_id."'".')"> <i
+                    class="glyphicon glyphicon-trash"></i> Return</a></li>
+
+    </ul>
+</div>';
+
+$data[] = $row;
+}
+
+$output = array(
+
+"data" => $data,
+);
+//output to json format
+echo json_encode($output) ;
+}
+
+public function payment_send($mod, $clientid)
+{
+$html = $this->load->view('yogiccoach/ajax/payment_download',$id,true);
+$pdfFilePath = "report".$id.".pdf";
+$this->load->library('m_pdf');
+ob_clean();
+$this->m_pdf->pdf->WriteHTML($html);
+$pdfFile = $this->m_pdf->pdf->Output($pdfFilePath);
+
+$clientDetails = $this->db->get_where("users", array("fld_id"=>$clientid),1,0);
+
+$clientName = $clientDetails->fld_first_name.'-'.$clientDetails->fld_last_name;
+$clientEmail = $clientDetails->fld_email;
+
+$this->load->model('user_model');
+$coachDetails =$this->user_model->get_row($this->userid);
+$coachName ="";
+$coachEmail="";
+
+if(sizeof($coachDetails)>0){
+$coachName =$coachDetails['fld_first_name'].' '. $coachDetails['fld_last_name'];
+$coachEmail=$coachDetails['fld_email'];
+}
+
+$subject = "payment invoice";
+$message= "download invoice";
+$file = $pdfFilePath;
+$file_size = filesize($file);
+$handle = fopen($file, "r");
+$content = fread($handle, $file_size);
+fclose($handle);
+//$content = chunk_split(base64_encode($content));
+$from='MyPortalX';
+$separator = md5(time());
+$eol = PHP_EOL;
+$filename = $clientName."-report".$id.".pdf";
+$attachment = chunk_split(base64_encode($content));
+$headers = "From: " . $from . $eol;
+if($coachEmail !='')
+$headers .= 'Cc: '. $coachName .'<'.$coachEmail.'>\r\n';
+    /*$headers .= 'Bcc: test@test.com\r\n';*/
+    $headers .= "MIME-Version: 1.0" . $eol;
+    $headers .= "Content-Type: multipart/mixed; boundary=\"" . $separator . "\"" . $eol . $eol;
+    $body = "";
+    $body .= "Content-Transfer-Encoding: 7bit" . $eol;
+    $body .= "This is a MIME encoded message." . $eol;
+    $body .= "--" . $separator . $eol;
+    $body .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
+    $body .= "Content-Transfer-Encoding: 8bit" . $eol . $eol;
+    $body .= $message . $eol;
+    $body .= "--" . $separator . $eol;
+    $body .= "Content-Type: application/octet-stream; name=\"" . $filename . "\"" . $eol;
+    $body .= "Content-Transfer-Encoding: base64" . $eol;
+    $body .= "Content-Disposition: attachment" . $eol . $eol;
+    $body .= $attachment . $eol;
+    $body .= "--" . $separator . "--";
+
+    /*******************pallavi code end*************************/
+
+    $retval = mail ($clientEmail,$subject,$body,$headers);
+    $response_message="sent";
+    }
+
+    public function payment_cancel($id){
+    $this->db->delete('payment',array('fld_id'=>$id));
+    $view1="Purchase Return Successfully";
+    echo json_encode($view1);
+    }
+
+    public function payment_edit($id)
+    {
+    $html = $this->load->view('yogiccoach/ajax/payment_download',$id,true);
+    $pdfFilePath = "report".$id.".pdf";
+    $this->load->library('m_pdf');
+    ob_clean();
+    $this->m_pdf->pdf->WriteHTML($html);
+    $pdfFile = $this->m_pdf->pdf->Output($pdfFilePath,"D");
+    ob_end_clean();
+    }
+
+    public function add_payments()
+    {
+    // print_r($_POST);
+    $data = array(
+    'fld_date' => $_POST['fld_date'] ,
+    'fld_client_id' => $_POST['fld_client_id'],
+    'fld_product_name' => $_POST['fld_product_name'],
+    'fld_product_description' => $_POST['fld_product_description'],
+    'fld_total_payment' => $_POST['fld_total_payment'],
+    'fld_promo' => $_POST['fld_promo'],
+    'fld_invoice' => $_POST['fld_invoice'],
+    'fld_status' => $_POST['fld_status'],
+    'fld_parent_id' => $_POST['fld_parent_id'],
+    );
+    $this->db->insert('payment',$data);
+    $data1 = "Payment Added";
+    echo json_encode($data1);
+    }</xmp></code></pre>
+<p>payment view</p>
+<code>application/views/yogiccoach/payments.php</code>
+<pre><code class="language-html"><xmp><?php 
+
+$this->load->view('yogiccoach/sidebar'); 
+
+  defined('BASEPATH') OR exit('No direct script access allowed');
+
+  $this->lang->load('date', 'english');
+
+  $session = $this->session->get_userdata();
+
+  $login_id=$session['user_id']; 
+
+  ?>
+
+<div class="content-wrapper">
+
+    <!-- Content Header (Page header) -->
+
+    <section class="content-header">
+        <ol class="breadcrumb">
+
+            <li><a href="#"><i class="fa fa-dashboard"></i> home</a></li>
+
+            <li class="active">Purchase</li>
+
+        </ol>
+
+    </section>
+
+
+
+
+
+
+
+    <button class="btn btn-success" onclick="add_customer()"><i class="glyphicon glyphicon-plus"></i> Add New
+        Payment</button>
+
+    <button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
+
+    <div id="error_container"></div>
+
+
+
+    <!-- Bootstrap modal -->
+
+    <div class="modal fade" id="modal_form" role="dialog">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+
+                    <h3 class="modal-title">Add Payment</h3>
+
+                </div>
+
+                <div class="modal-body" id="add-brand-messages"></div>
+
+                <div class="modal-body form">
+
+                    <form action="#" id="form" class="form-horizontal">
+
+                        <div class="form-body">
+
+                            <div class="form-group">
+
+                                <label class="control-label col-md-3">Date</label>
+
+                                <div class="col-md-9">
+
+                                    <input type="hidden" name="fld_parent_id" value="<?= $login_id ?>">
+
+                                    <input type="date" class="form-control" name="fld_date" id="theDate">
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label class="control-label col-md-3">select client</label>
+
+                                <div class="col-md-9">
+
+                                    <select name="fld_client_id" class="form-control client_select">
+
+                                        <option>Choose Client</option>
+
+                                        <?php $this->db->order_by("fld_id", "desc");
+
+$getData=$this->db->get_where('users',array('fld_parent'=>$login_id,'fld_status'=> '1'))->result();
+
+foreach($getData as $row){
+
+  $client_name = $row->fld_first_name.' '. $row->fld_last_name;
+
+                   if(trim($client_name) == "")
+
+                     $client_name = $row->fld_username;
+
+  echo '<option value="'.$row->fld_id.'"> '.$client_name.' </option>';
+
+  }
+
+ ?>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label class="control-label col-md-3">Product</label>
+
+                                <div class="col-md-9">
+
+                                    <input type="text" class="form-control" id="Product" name="fld_product_name">
+
+                                </div>
+
+                            </div>
+
+                            <div id="hide_pay">
+
+                                <div class="form-group">
+
+                                    <label class="control-label col-md-3">Product Description</label>
+
+                                    <div class="col-md-9">
+
+                                        <textarea name="fld_product_description" id="description"
+                                            class="form-control"></textarea>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label class="control-label col-md-3">Payment</label>
+
+                                    <div class="col-md-9">
+
+                                        <input type="Number" name="fld_total_payment" id="pay" class="form-control">
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label class="control-label col-md-3">promo code</label>
+
+                                    <div class="col-md-9">
+
+                                        <input type="text" name="fld_promo" id="promo" class="form-control">
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label class="control-label col-md-3">Invoice No</label>
+
+                                    <div class="col-md-9">
+
+                                        <input type="text" name="fld_invoice" id="invoice" class="form-control">
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label class="control-label col-md-3">status</label>
+
+                                    <div class="col-md-9">
+
+                                        paid
+
+                                        <input type="radio" name="fld_status" value="1" id="status" checked="checked">
+
+                                        No paid
+
+                                        <input type="radio" name="fld_status" value="0" id="status">
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div id="hide_pay1">
+
+                    <div class="modal-footer">
+
+                        <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Add Payment
+                        </button>
+
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+
+                    </div>
+
+                </div>
+
+            </div><!-- /.modal-content -->
+
+        </div><!-- /.modal-dialog -->
+
+    </div><!-- /.modal -->
+
+    <!-- End Bootstrap modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Main content -->
+
+    <section class="content container-fluid">
+
+
+
+        <div class="row">
+
+            <div class="box">
+
+                <div class="box-header">
+
+                    <h3 class="box-title">View Purchase</h3>
+
+                </div>
+
+                <!-- /.box-header -->
+
+                <div class="box-body">
+
+                    <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>P_No</th>
+
+                                <th>Date</th>
+
+                                <th>Name</th>
+
+                                <th>product Name</th>
+
+                                <th>Description</th>
+
+                                <th>Total</th>
+
+                                <th>Promo</th>
+
+                                <th>Invoice</th>
+
+                                <th>status</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+
+
+    </section>
+
+
+
+</div>
+
+<script type="text/javascript">
+
+
+
+    $(document).ready(function () {
+
+        var date = new Date();
+
+
+
+        var day = date.getDate();
+
+        var month = date.getMonth() + 1;
+
+        var year = date.getFullYear();
+
+
+
+        if (month < 10) month = "0" + month;
+
+        if (day < 10) day = "0" + day;
+
+
+
+        var today = year + "-" + month + "-" + day;
+
+        $("#theDate").attr("value", today);
+
+    });
+
+    $(document).ready(function () {
+
+        //datatables
+
+        table = $('#table').DataTable({
+
+
+
+            // Load data for the table's content from an Ajax source
+
+            "ajax": {
+
+                "url": "<?php echo site_url('yogiccoach/ajax_list')?>",
+
+                'order': []
+
+            },
+
+
+
+        });
+
+
+
+        payment_send = function (obj) {
+
+            var recid = $(obj).attr('data-id');
+
+            var mod = $(obj).attr('data-name');
+
+            $.get(home_url + "yogiccoach/payment_send/" + recid + "/" + mod + "/", "", function (response) {
+
+                if (response = "sent") {
+
+                    $('#error_container').html('<div class="alert alert-success fade in"><strong>Success!</strong>Mail has been sent.</div>').show();
+
+                    $("#error_container").show().delay(3000).queue(function (n) {
+
+                        //$(obj).hide();
+
+                    });
+
+                }
+
+                else {
+
+                    $('#error_container').html('<div class="alert alert-warning fade in"><strong></strong> ' + response + '</div>').show();
+
+                    $("#error_container").show().delay(3000).queue(function (n) {
+
+                        //$(this).hide();
+
+                    });
+
+                }
+
+
+
+            });
+
+        };
+
+
+
+    });
+
+
+
+    var table;
+
+
+
+    function add_customer() {
+
+        $(".text-danger").remove();
+
+        // remove the form error
+
+        $('.form-group').removeClass('has-error').removeClass('has-success');
+
+
+
+        $("#btnSave").html('Save');
+
+
+
+        save_method = 'add';
+
+        $('#form')[0].reset(); // reset form on modals
+
+        $('#modal_form').modal('show'); // show bootstrap modal
+
+        //$('.modal-title').text('Add Person'); // Set Title to Bootstrap modal title
+
+
+
+
+
+        // window.location.href = "<?php echo site_url('yogiccoach/'); ?>";
+
+
+
+    }
+
+
+
+    function reload_table() {
+
+        table.ajax.reload(null, false);
+
+    }
+
+
+
+    function payment_edit(id) {
+
+        url = "<?php echo site_url('yogiccoach/payment_edit')?>/" + id;
+
+        window.location.assign(url);
+
+    }
+
+
+
+
+
+    function purchase_cancel(id) {
+
+        if (confirm('Are you sure Cancel this Purchase?')) {
+
+
+
+            $.ajax({
+
+                url: "<?php echo site_url('yogiccoach/payment_cancel')?>/" + id,
+
+                type: "POST",
+
+                dataType: "JSON",
+
+                success: function (data) {
+
+                    //if success reload ajax table
+
+                    alert('Purchase No : ' + id + ' Return Successfully');
+
+                    reload_table();
+
+                },
+
+                error: function (jqXHR, textStatus, errorThrown) {
+
+                    alert('Error deleting data');
+
+                }
+
+            });
+
+
+
+        }
+
+    }
+
+
+
+    function save() {
+
+        $(".text-danger").remove();
+
+        // remove the form error
+
+        $('.form-group').removeClass('has-error').removeClass('has-success');
+
+
+
+        $.ajax({
+
+            url: "<?php echo site_url('yogiccoach/add_payments')?>",
+
+            type: "POST",
+
+            data: $('#form').serialize(),
+
+            dataType: "JSON",
+
+            success: function (data) {
+
+
+
+                // reset the form text
+
+                $("#form")[0].reset();
+
+                reload_table();
+
+                //   // remove the error text
+
+                $(".text-danger").remove();
+
+                //   // remove the form error
+
+                $('.form-group').removeClass('has-error').removeClass('has-success');
+
+
+
+                $('#add-brand-messages').html('<div class="alert alert-success">' +
+
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+
+                    '<strong><i class="glyphicon glyphicon-ok-sign"></i></strong> ' + data +
+
+                    '</div>');
+
+
+
+                $(".alert-success").delay(500).show(10, function () {
+
+                    $(this).delay(3000).hide(10, function () {
+
+                        $(this).remove();
+                        location.reload(true);
+
+                    });
+
+                }); // /.alert
+
+            },
+
+            error: function (jqXHR, textStatus, errorThrown) {
+
+                alert('Error get data from ajax');
+
+            }
+
+        });
+
+    }
+
+</script>
+
+<?php $this->load->view('yogiccoach/footer'); ?></xmp></code></pre>
+<p>Edit payment</p>
+<img class="img-fluid" src="image/editepaymentcoach.png" alt="Login Page" height="100">
+<br><br>
+<p>Edit payment controller</p>
+<code>application/controllers/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function edit_purchase($id)
+{
+$data['id'] = $id;
+$this->load->view('yogiccoach/edit_purchase',$data);
+}
+
+public function update_payments()
+{
+$fld_id = $_POST['fld_id'];
+$data = array(
+'fld_date' => $_POST['fld_date'] ,
+'fld_client_id' => $_POST['fld_client_id'],
+'fld_product_name' => $_POST['fld_product_name'],
+'fld_product_description' => $_POST['fld_product_description'],
+'fld_total_payment' => $_POST['fld_total_payment'],
+'fld_promo' => $_POST['fld_promo'],
+'fld_invoice' => $_POST['fld_invoice'],
+'fld_status' => $_POST['fld_status'],
+'fld_parent_id' => $_POST['fld_parent_id'],
+);
+$this->db->where('fld_id',$fld_id);
+$this->db->update('payment',$data);
+$data1 = "Payment updated";
+echo json_encode($data1);
+}</xmp></code></pre>
+</div>

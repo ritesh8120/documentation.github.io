@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Enter your description here" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="prism.css">
+    <script src="prism.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300&display=swap" rel="stylesheet">
+    <title>myportalx.com || Documentation</title>
+    <style>
+        * {
+            font-family: Poppins, sans-serif;
+        }
+        
+        h2 {
+            font-weight: 800;
+        }
+        
+        p {
+            font-weight: 400;
+        }
+        pre[class*=language-] {
+    background: #272822;
+    height: 200px;
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="text-align: center;font-family: 'Open Sans Condensed', sans-serif;font-weight: 800;color:#32c1dd">Myportalx.com || Documentation</h1>
+        <p>This is the documentation of myportals.com. In which I am giving you complete information about the code done in the website.There are 3 types of users in myportals.com who are admin, coach, member.</p>
+        <p><b>1. Admin -</b> Coach and member can be created, deleted and listed and profile view through admin.Also create and view and delete courses, coupons and packages.Inside Chakra Reading downloads the images sent by the member and then processes
+            those images.Then uploads the processed images instead of those images. </p>
+        <p><b>2. Coach -</b> member create and delete by coach. show all member list in coach panel. coach manage all our member history,permition and result. coach appointment shedule and config appointment.</p>
+        <p><b>3. Member -</b> DAS fill by member daily. coach assaint member session form. member upload your image by insraction </p>
+        <h2>Connect CI to Database</h2>
+        <p> change <b>username ,password </b> & <b>database</b> to connect database.</p>
+        <code>application/config/database.php</code>
+        <pre><code class="language-html"><xmp><?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+/*
+| -------------------------------------------------------------------
+| DATABASE CONNECTIVITY SETTINGS
+| -------------------------------------------------------------------
+| This file will contain the settings needed to access your database.
+|
+| For complete instructions please consult the 'Database Connection'
+| page of the User Guide.
+|
+| -------------------------------------------------------------------
+| EXPLANATION OF VARIABLES
+| -------------------------------------------------------------------
+|
+|	['dsn']      The full DSN string describe a connection to the database.
+|	['hostname'] The hostname of your database server.
+|	['username'] The username used to connect to the database
+|	['password'] The password used to connect to the database
+|	['database'] The name of the database you want to connect to
+|	['dbdriver'] The database driver. e.g.: mysqli.
+|			Currently supported:
+|				 cubrid, ibase, mssql, mysql, mysqli, oci8,
+|				 odbc, pdo, postgre, sqlite, sqlite3, sqlsrv
+|	['dbprefix'] You can add an optional prefix, which will be added
+|				 to the table name when using the  Query Builder class
+|	['pconnect'] TRUE/FALSE - Whether to use a persistent connection
+|	['db_debug'] TRUE/FALSE - Whether database errors should be displayed.
+|	['cache_on'] TRUE/FALSE - Enables/disables query caching
+|	['cachedir'] The path to the folder where cache files should be stored
+|	['char_set'] The character set used in communicating with the database
+|	['dbcollat'] The character collation used in communicating with the database
+|				 NOTE: For MySQL and MySQLi databases, this setting is only used
+| 				 as a backup if your server is running PHP < 5.2.3 or MySQL < 5.0.7
+|				 (and in table creation queries made with DB Forge).
+| 				 There is an incompatibility in PHP with mysql_real_escape_string() which
+| 				 can make your site vulnerable to SQL injection if you are using a
+| 				 multi-byte character set and are running versions lower than these.
+| 				 Sites using Latin-1 or UTF-8 database character set and collation are unaffected.
+|	['swap_pre'] A default table prefix that should be swapped with the dbprefix
+|	['encrypt']  Whether or not to use an encrypted connection.
+|
+|			'mysql' (deprecated), 'sqlsrv' and 'pdo/sqlsrv' drivers accept TRUE/FALSE
+|			'mysqli' and 'pdo/mysql' drivers accept an array with the following options:
+|
+|				'ssl_key'    - Path to the private key file
+|				'ssl_cert'   - Path to the public key certificate file
+|				'ssl_ca'     - Path to the certificate authority file
+|				'ssl_capath' - Path to a directory containing trusted CA certificats in PEM format
+|				'ssl_cipher' - List of *allowed* ciphers to be used for the encryption, separated by colons (':')
+|				'ssl_verify' - TRUE/FALSE; Whether verify the server certificate or not ('mysqli' only)
+|
+|	['compress'] Whether or not to use client compression (MySQL only)
+|	['stricton'] TRUE/FALSE - forces 'Strict Mode' connections
+|							- good for ensuring strict SQL while developing
+|	['ssl_options']	Used to set various SSL options that can be used when making SSL connections.
+|	['failover'] array - A array with 0 or more data for connections if the main should fail.
+|	['save_queries'] TRUE/FALSE - Whether to "save" all executed queries.
+| 				NOTE: Disabling this will also effectively disable both
+| 				$this->db->last_query() and profiling of DB queries.
+| 				When you run a query, with this setting set to TRUE (default),
+| 				CodeIgniter will store the SQL statement for debugging purposes.
+| 				However, this may cause high memory usage, especially if you run
+| 				a lot of SQL queries ... disable this to avoid that problem.
+|
+| The $active_group variable lets you choose which connection group to
+| make active.  By default there is only one group (the 'default' group).
+|
+| The $query_builder variables lets you determine whether or not to load
+| the query builder class.
+*/
+$active_group = 'default';
+$query_builder = TRUE;
+$db['default'] = array(
+	'dsn'	=> '',
+	'hostname' => 'localhost',
+	'username' => 'myporta7_AppLive',
+	'password' => '100%dev100',
+	'database' => 'myporta7_YogaPortal',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => 'mys_',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+</xmp></code></pre>
+
+        <h2 style="font-weight: 800;">Config Website url</h2>
+        <p style="font-weight: 400;">config <b>$config['base_url']</b> change value to your base url </p>
+        <code>application/config/config.php</code>
+        <pre><code class="language-html"><xmp><?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+/*
+|--------------------------------------------------------------------------
+| Base Site URL
+|--------------------------------------------------------------------------
+|
+| URL to your CodeIgniter root. Typically this will be your base URL,
+| WITH a trailing slash:
+|
+|	http://example.com/
+|
+| WARNING: You MUST set this value!
+|
+| If it is not set, then CodeIgniter will try guess the protocol and path
+| your installation, but due to security concerns the hostname will be set
+| to $_SERVER['SERVER_ADDR'] if available, or localhost otherwise.
+| The auto-detection mechanism exists only for convenience during
+| development and MUST NOT be used in production!
+|
+| If you need to allow multiple domains, remember that this file is still
+| a PHP script and you can easily do that on your own.
+|
+*/
+
+$config['base_url'] = 'https://www.myportalx.com/tool/';
+$config['base_url_api'] = $config['base_url'] .'appointment_api/';
+$config['site_name'] ="MyPortalX";
+$config['mail_from'] ='info@myportalx.com';
+$config["Chakra_Single_Image_Cost"] = "5";
+$config["Chakra_Multiple_Image_Cost"] ="10";
+/*
+|--------------------------------------------------------------------------
+| Index File
+|--------------------------------------------------------------------------
+|
+| Typically this will be your index.php file, unless you've renamed it to
+| something else. If you are using mod_rewrite to remove the page set this
+| variable so that it is blank.
+|
+*/
+$config['index_page'] = '';
+/*
+|--------------------------------------------------------------------------
+| URI PROTOCOL
+|--------------------------------------------------------------------------
+|
+| This item determines which server global should be used to retrieve the
+| URI string.  The default setting of 'REQUEST_URI' works for most servers.
+| If your links do not seem to work, try one of the other delicious flavors:
+|
+| 'REQUEST_URI'    Uses $_SERVER['REQUEST_URI']
+| 'QUERY_STRING'   Uses $_SERVER['QUERY_STRING']
+| 'PATH_INFO'      Uses $_SERVER['PATH_INFO']
+|
+| WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
+*/
+$config['uri_protocol']	= 'REQUEST_URI';
+/*
+|--------------------------------------------------------------------------
+| URL suffix
+|--------------------------------------------------------------------------
+|
+| This option allows you to add a suffix to all URLs generated by CodeIgniter.
+| For more information please see the user guide:
+|
+| http://codeigniter.com/user_guide/general/urls.html
+*/
+$config['url_suffix'] = '';
+/*
+|--------------------------------------------------------------------------
+| Default Language
+|--------------------------------------------------------------------------
+|
+| This determines which set of language files should be used. Make sure
+| there is an available translation if you intend to use something other
+| than english.
+|
+*/
+$config['language']	= 'english';
+/*
+|--------------------------------------------------------------------------
+| Default Character Set
+|--------------------------------------------------------------------------
+|
+| This determines which character set is used by default in various methods
+| that require a character set to be provided.
+|
+| See http://php.net/htmlspecialchars for a list of supported charsets.
+|
+*/
+$config['charset'] = 'UTF-8';
+/*
+|--------------------------------------------------------------------------
+| Enable/Disable System Hooks
+|--------------------------------------------------------------------------
+|
+| If you would like to use the 'hooks' feature you must enable it by
+| setting this variable to TRUE (boolean).  See the user guide for details.
+|
+*/
+$config['enable_hooks'] = FALSE;
+/*
+|--------------------------------------------------------------------------
+| Class Extension Prefix
+|--------------------------------------------------------------------------
+|
+| This item allows you to set the filename/classname prefix when extending
+| native libraries.  For more information please see the user guide:
+|
+| http://codeigniter.com/user_guide/general/core_classes.html
+| http://codeigniter.com/user_guide/general/creating_libraries.html
+|
+*/
+$config['subclass_prefix'] = 'MY_';
+/*
+|--------------------------------------------------------------------------
+| Composer auto-loading
+|--------------------------------------------------------------------------
+|
+| Enabling this setting will tell CodeIgniter to look for a Composer
+| package auto-loader script in application/vendor/autoload.php.
+|
+|	$config['composer_autoload'] = TRUE;
+|
+| Or if you have your vendor/ directory located somewhere else, you
+| can opt to set a specific path as well:
+|
+|	$config['composer_autoload'] = '/path/to/vendor/autoload.php';
+|
+| For more information about Composer, please visit http://getcomposer.org/
+|
+| Note: This will NOT disable or override the CodeIgniter-specific
+|	autoloading (application/config/autoload.php)
+*/
+$config['composer_autoload'] = '/home/myporta7/public_html/tool/vendor/autoload.php';
+/*
+|--------------------------------------------------------------------------
+| Allowed URL Characters
+|--------------------------------------------------------------------------
+|
+| This lets you specify which characters are permitted within your URLs.
+| When someone tries to submit a URL with disallowed characters they will
+| get a warning message.
+|
+| As a security measure you are STRONGLY encouraged to restrict URLs to
+| as few characters as possible.  By default only these are allowed: a-z 0-9~%.:_-
+|
+| Leave blank to allow all characters -- but only if you are insane.
+|
+| The configured value is actually a regular expression character group
+| and it will be executed as: ! preg_match('/^[<permitted_uri_chars>]+$/i
+|
+| DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
+|
+*/
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+/*
+|--------------------------------------------------------------------------
+| Enable Query Strings
+|--------------------------------------------------------------------------
+|
+| By default CodeIgniter uses search-engine friendly segment based URLs:
+| example.com/who/what/where/
+|
+| By default CodeIgniter enables access to the $_GET array.  If for some
+| reason you would like to disable it, set 'allow_get_array' to FALSE.
+|
+| You can optionally enable standard query string based URLs:
+| example.com?who=me&what=something&where=here
+|
+| Options are: TRUE or FALSE (boolean)
+|
+| The other items let you set the query string 'words' that will
+| invoke your controllers and its functions:
+| example.com/index.php?c=controller&m=function
+|
+| Please note that some of the helpers won't work as expected when
+| this feature is enabled, since CodeIgniter is designed primarily to
+| use segment based URLs.
+|
+*/
+$config['allow_get_array'] = TRUE;
+ //$config['allowed_types'] = 'jpg | jpeg | png';
+$config['enable_query_strings'] = FALSE;
+$config['controller_trigger'] = 'c';
+$config['function_trigger'] = 'm';
+$config['directory_trigger'] = 'd';
+/*
+|--------------------------------------------------------------------------
+| Error Logging Threshold
+|--------------------------------------------------------------------------
+|
+| You can enable error logging by setting a threshold over zero. The
+| threshold determines what gets logged. Threshold options are:
+|
+|	0 = Disables logging, Error logging TURNED OFF
+|	1 = Error Messages (including PHP errors)
+|	2 = Debug Messages
+|	3 = Informational Messages
+|	4 = All Messages
+|
+| You can also pass an array with threshold levels to show individual error types
+|
+| 	array(2) = Debug Messages, without Error Messages
+|
+| For a live site you'll usually only enable Errors (1) to be logged otherwise
+| your log files will fill up very fast.
+|
+*/
+$config['log_threshold'] = 1;
+/*
+|--------------------------------------------------------------------------
+| Error Logging Directory Path
+|--------------------------------------------------------------------------
+|
+| Leave this BLANK unless you would like to set something other than the default
+| application/logs/ directory. Use a full server path with trailing slash.
+|
+*/
+$config['log_path'] = '';
+/*
+|--------------------------------------------------------------------------
+| Log File Extension
+|--------------------------------------------------------------------------
+|
+| The default filename extension for log files. The default 'php' allows for
+| protecting the log files via basic scripting, when they are to be stored
+| under a publicly accessible directory.
+|
+| Note: Leaving it blank will default to 'php'.
+|
+*/
+$config['log_file_extension'] = '';
+/*
+|--------------------------------------------------------------------------
+| Log File Permissions
+|--------------------------------------------------------------------------
+|
+| The file system permissions to be applied on newly created log files.
+|
+| IMPORTANT: This MUST be an integer (no quotes) and you MUST use octal
+|            integer notation (i.e. 0700, 0644, etc.)
+*/
+$config['log_file_permissions'] = 0644;
+/*
+|--------------------------------------------------------------------------
+| Date Format for Logs
+|--------------------------------------------------------------------------
+|
+| Each item that is logged has an associated date. You can use PHP date
+| codes to set your own date formatting
+|
+*/
+$config['log_date_format'] = 'Y-m-d H:i:s';
+/*
+|--------------------------------------------------------------------------
+| Error Views Directory Path
+|--------------------------------------------------------------------------
+|
+| Leave this BLANK unless you would like to set something other than the default
+| application/views/errors/ directory.  Use a full server path with trailing slash.
+|
+*/
+$config['error_views_path'] = '';
+/*
+|--------------------------------------------------------------------------
+| Cache Directory Path
+|--------------------------------------------------------------------------
+|
+| Leave this BLANK unless you would like to set something other than the default
+| application/cache/ directory.  Use a full server path with trailing slash.
+|
+*/
+$config['cache_path'] = '';
+/*
+|--------------------------------------------------------------------------
+| Cache Include Query String
+|--------------------------------------------------------------------------
+|
+| Whether to take the URL query string into consideration when generating
+| output cache files. Valid options are:
+|
+|	FALSE      = Disabled
+|	TRUE       = Enabled, take all query parameters into account.
+|	             Please be aware that this may result in numerous cache
+|	             files generated for the same page over and over again.
+|	array('q') = Enabled, but only take into account the specified list
+|	             of query parameters.
+|
+*/
+$config['cache_query_string'] = FALSE;
+/*
+|--------------------------------------------------------------------------
+| Encryption Key
+|--------------------------------------------------------------------------
+|
+| If you use the Encryption class, you must set an encryption key.
+| See the user guide for more info.
+|
+| http://codeigniter.com/user_guide/libraries/encryption.html
+|
+*/
+$config['encryption_key'] = '';
+/*
+|--------------------------------------------------------------------------
+| Session Variables
+|--------------------------------------------------------------------------
+|
+| 'sess_driver'
+|
+|	The storage driver to use: files, database, redis, memcached
+|
+| 'sess_cookie_name'
+|
+|	The session cookie name, must contain only [0-9a-z_-] characters
+|
+| 'sess_expiration'
+|
+|	The number of SECONDS you want the session to last.
+|	Setting to 0 (zero) means expire when the browser is closed.
+|
+| 'sess_save_path'
+|
+|	The location to save sessions to, driver dependent.
+|
+|	For the 'files' driver, it's a path to a writable directory.
+|	WARNING: Only absolute paths are supported!
+|
+|	For the 'database' driver, it's a table name.
+|	Please read up the manual for the format with other session drivers.
+|
+|	IMPORTANT: You are REQUIRED to set a valid save path!
+|
+| 'sess_match_ip'
+|
+|	Whether to match the user's IP address when reading the session data.
+|
+|	WARNING: If you're using the database driver, don't forget to update
+|	         your session table's PRIMARY KEY when changing this setting.
+|
+| 'sess_time_to_update'
+|
+|	How many seconds between CI regenerating the session ID.
+|
+| 'sess_regenerate_destroy'
+|
+|	Whether to destroy session data associated with the old session ID
+|	when auto-regenerating the session ID. When set to FALSE, the data
+|	will be later deleted by the garbage collector.
+|
+| Other session cookie settings are shared with the rest of the application,
+| except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
+|
+*/
+/* $config['sess_driver'] = 'files';
+$config['sess_cookie_name'] = 'ci_session';
+$config['sess_expiration'] = 7200;
+$config['sess_save_path'] = 'ci_session';
+$config['sess_match_ip'] = FALSE;
+$config['sess_time_to_update'] = 300;
+$config['sess_regenerate_destroy'] = FALSE; */
+
+$config['sess_use_database'] = TRUE;
+$config['sess_driver'] = 'database';
+$config['sess_cookie_name'] = 'ci_session';
+$config['sess_expiration'] = 7200;
+$config['sess_save_path'] = 'ci_sessions';
+$config['sess_table_name'] = 'ci_sessions';
+$config['sess_match_ip'] = FALSE;
+$config['sess_time_to_update'] = 300;
+$config['sess_regenerate_destroy'] = FALSE;
+/*
+|--------------------------------------------------------------------------
+| Cookie Related Variables
+|--------------------------------------------------------------------------
+|
+| 'cookie_prefix'   = Set a cookie name prefix if you need to avoid collisions
+| 'cookie_domain'   = Set to .your-domain.com for site-wide cookies
+| 'cookie_path'     = Typically will be a forward slash
+| 'cookie_secure'   = Cookie will only be set if a secure HTTPS connection exists.
+| 'cookie_httponly' = Cookie will only be accessible via HTTP(S) (no javascript)
+|
+| Note: These settings (with the exception of 'cookie_prefix' and
+|       'cookie_httponly') will also affect sessions.
+|
+*/
+$config['cookie_prefix']	= '';
+$config['cookie_domain']	= '';
+$config['cookie_path']		= '/';
+$config['cookie_secure']	= FALSE;
+$config['cookie_httponly'] 	= FALSE;
+/*
+|--------------------------------------------------------------------------
+| Standardize newlines
+|--------------------------------------------------------------------------
+|
+| Determines whether to standardize newline characters in input data,
+| meaning to replace \r\n, \r, \n occurrences with the PHP_EOL value.
+|
+| This is particularly useful for portability between UNIX-based OSes,
+| (usually \n) and Windows (\r\n).
+|
+*/
+$config['standardize_newlines'] = FALSE;
+/*
+|--------------------------------------------------------------------------
+| Global XSS Filtering
+|--------------------------------------------------------------------------
+|
+| Determines whether the XSS filter is always active when GET, POST or
+| COOKIE data is encountered
+|
+| WARNING: This feature is DEPRECATED and currently available only
+|          for backwards compatibility purposes!
+|
+*/
+$config['global_xss_filtering'] = FALSE;
+/*
+|--------------------------------------------------------------------------
+| Cross Site Request Forgery
+|--------------------------------------------------------------------------
+| Enables a CSRF cookie token to be set. When set to TRUE, token will be
+| checked on a submitted form. If you are accepting user data, it is strongly
+| recommended CSRF protection be enabled.
+|
+| 'csrf_token_name' = The token name
+| 'csrf_cookie_name' = The cookie name
+| 'csrf_expire' = The number in seconds the token should expire.
+| 'csrf_regenerate' = Regenerate token on every submission
+| 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
+*/
+$config['csrf_protection'] = FALSE;
+$config['csrf_token_name'] = 'csrf_test_name';
+$config['csrf_cookie_name'] = 'csrf_cookie_name';
+$config['csrf_expire'] = 7200;
+$config['csrf_regenerate'] = TRUE;
+$config['csrf_exclude_uris'] = array();
+/*
+|--------------------------------------------------------------------------
+| Output Compression
+|--------------------------------------------------------------------------
+|
+| Enables Gzip output compression for faster page loads.  When enabled,
+| the output class will test whether your server supports Gzip.
+| Even if it does, however, not all browsers support compression
+| so enable only if you are reasonably sure your visitors can handle it.
+|
+| Only used if zlib.output_compression is turned off in your php.ini.
+| Please do not use it together with httpd-level output compression.
+|
+| VERY IMPORTANT:  If you are getting a blank page when compression is enabled it
+| means you are prematurely outputting something to your browser. It could
+| even be a line of whitespace at the end of one of your scripts.  For
+| compression to work, nothing can be sent before the output buffer is called
+| by the output class.  Do not 'echo' any values with compression enabled.
+|
+*/
+$config['compress_output'] = FALSE;
+/*
+|--------------------------------------------------------------------------
+| Master Time Reference
+|--------------------------------------------------------------------------
+|
+| Options are 'local' or any PHP supported timezone. This preference tells
+| the system whether to use your server's local time as the master 'now'
+| reference, or convert it to the configured one timezone. See the 'date
+| helper' page of the user guide for information regarding date handling.
+|
+*/
+$config['time_reference'] = 'UTC';
+/*
+|--------------------------------------------------------------------------
+| Rewrite PHP Short Tags
+|--------------------------------------------------------------------------
+|
+| If your PHP installation does not have short tag support enabled CI
+| can rewrite the tags on-the-fly, enabling you to utilize that syntax
+| in your view files.  Options are TRUE or FALSE (boolean)
+|
+| Note: You need to have eval() enabled for this to work.
+|
+*/
+$config['rewrite_short_tags'] = FALSE;
+/*
+|--------------------------------------------------------------------------
+| Reverse Proxy IPs
+|--------------------------------------------------------------------------
+|
+| If your server is behind a reverse proxy, you must whitelist the proxy
+| IP addresses from which CodeIgniter should trust headers such as
+| HTTP_X_FORWARDED_FOR and HTTP_CLIENT_IP in order to properly identify
+| the visitor's IP address.
+|
+| You can use both an array or a comma-separated list of proxy addresses,
+| as well as specifying whole subnets. Here are a few examples:
+|
+| Comma-separated:	'10.0.1.200,192.168.5.0/24'
+| Array:		array('10.0.1.200', '192.168.5.0/24')
+*/
+$config['proxy_ips'] = '';
+</xmp></code></pre>
+        <h2>Login Page</h2>
+        <p>In this page login three type of user.</p>
+        <img class="img-fluid" src="image/loginpage.png" alt="Login Page" height="100">
+        <br><br>
+        <p>Login page View</p>
+        <code>application/views/site/login.php</code>
+        <pre><code class="language-html"><xmp><?php defined('BASEPATH') OR exit('No direct script access allowed');
+error_reporting(0);
+$session=$this->session->get_userdata();
+?>
+<!DOCTYPE html>
+<html lang="en" class="body-full-height"> 
+<head> 
+<!-- META SECTION --> 
+<title><?php echo $this->config->item('site_name');?> - Login
+</title> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+<link rel="icon" href="<?php echo base_url().'assets/img/';?>favicon.png" type="image/x-icon" /> 
+<!-- END META SECTION --> 
+<!-- CSS INCLUDE --> 
+<link rel="stylesheet" type="text/css" id="theme" href="<?php echo base_url()."assets/";?>css/theme-default-12.css"/> 
+<!-- EOF CSS INCLUDE --> 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"> 
+</head> 
+<body> 
+<div class="container-fluid"> 
+    <div class="wrapper"> 
+        <div class="row"> 
+            <div class="col-md-8 bg-image"> 
+                <div class="name-logo"> <h3 style="font-size: 35px;">Myportalx.com</h3> <h1>MEMBERS LOGIN</h1> 
+                </div> 
+            </div> 
+            <div class="col-md-4 bg-login"> 
+                <div class="login-logo"> 
+                    <h2 class="text-white text-center">Welcome</h2><br><?php if(isset($session['logged_in']) ){ redirect(base_url($session["user_type"]));  }else{ ?> 
+                    <form class="form-horizontal my-login-validation" method="post"> 
+                        <div class="form-group loginwala"> 
+                            <label for="text" class="text-white">Username</label>
+                            <input id="get_username" name="username" type="text" class="form-control" placeholder="Enter your Username" required='required' autofocus>
+                            <div class="invalid-feedback">user is invalid 
+                            </div> 
+                        </div>
+                        <div class="form-group loginwala"> 
+                            <label for="password" class="text-white">Password</label> 
+                            <input id="get_password" type="password" name="password" class="form-control" placeholder="Enter your password" required='required' autocomplete="off"> 
+                            <div class="invalid-feedback">Password is required</div> 
+                        </div> 
+                        <div id="dvMessage" style="color:red"></div>
+                        <div class="form-group m-0">
+                            <button type="button" class="btn btn-block" id="get_login"> Login </button>
+                        </div><br> 
+                        <div class="mt-2 text-white">Don't have an account?<br>
+                            <a href="https://rajahsharma2.clickfunnels.com/myportalx-to-optin">Start Your Free Trial</a>
+                        </div><br>
+                        <a href="<?php echo base_url().'ForgotPassword' ?>">Forgot Password?</a> 
+                    </form> <?php } ?><br> 
+                    <div style="color:#909090; text-align:center;"> Copyright © <?php echo date("Y");?> <?php echo $this->config->item('site_name');?>.<br>All rights reserved 
+                    </div> 
+                    <div class="pull-right">
+                        <a href="https://myportalx.com">Back to the site.</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="home_url" value="<?php echo base_url();?>">
+<!-- START PLUGINS -->
+<script type="text/javascript" src="<?php echo base_url('assets/js/plugins/jquery/jquery.min.js');?>"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/js/plugins/jquery/jquery-ui.min.js');?>"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/js/plugins/bootstrap/bootstrap.min.js');?>"></script> 
+<script src="<?php echo base_url('assets/js/fast-buddy.js'); ?>"></script>
+<!-- END PLUGINS -->
+<script> 
+    $(document).ready(function(){ 
+        $('#get_username').keyup(function(e){
+         if(e.keyCode == 13) {
+          console.log("Enter");
+           $("#get_login").click();
+        } 
+    });
+    $('#get_password').keyup(function(e){
+        if(e.keyCode == 13) {
+          console.log("Enter");
+           $("#get_login").click();
+        } 
+    });
+}); 
+
+function resentverificaion(obj){ 
+    _username = $("#get_username").val();
+    _password = $("#get_password").val();
+
+    $(obj).html("Sending..");
+        $.ajax({url: home_url+"login/send_verification_mail",
+            data: {
+                "username": _username,
+                "password": _password
+            },
+            dataType: "json",
+            type: "POST",
+            success: function(response){
+                console.log(response);
+            if(response.status=='1') {
+                $("#dvMessage").removeClass("alert alert-danger");
+                $("#dvMessage").addClass("alert alert-success");
+                $("#dvMessage").html("Mail sent").fadeOut(3000);
+            }else
+            {
+                $("#dvMessage").addClass("alert alert-danger");
+                $("#dvMessage").html(response.message);
+                return false;
+            }
+        }
+    });
+}
+</script> 
+</xmp></code></pre>
+        <p>login page Controller</p>
+        <code>application/controllers/login.php</code>
+        <pre><code class="language-html"><xmp><?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+class Login extends CI_Controller {
+    public function index()
+	{
+        $this->load->view('site/login');
+    }
+    public function get_login()
+    {
+	    $this->load->model("Login_model");
+		$response = $this->Login_model->login();
+		$this->session->set_userdata($response['data']);
+		echo json_encode($response);
+		die;
+	}
+    public function send_verification_mail($_id = null)
+    {
+		if($_id != null)
+        {
+			$geLoginQuery = $this->db->get_where("users", array('fld_id' =>$_id));
+		}else 
+        {
+			$username = $_POST['username'];
+			$password = $_POST['password'];
+			$where ="(fld_username ='".$username."' OR fld_email ='".$username."') AND fld_password ='".$password."'";
+			$geLoginQuery = $this->db->get_where("users", $where);
+		}
+		if ($geLoginQuery->num_rows() >0) 
+        {
+			$userRow = $geLoginQuery->row_array();
+			if ($userRow['fld_varification'] == '0') 
+            {
+				######SEND EMAIL
+				$to = $userRow["fld_email"];
+				$subject = "[MyPortalX] Verification Mail ";
+				$message ="Please verify your email using the following link, to activated your account.<br><br>";
+				$message .="<a href='".base_url() ."registration/email_verification/".$userRow["fld_rand_code"]."'>".base_url()."registration/email_verification/".$userRow["fld_rand_code"]."</a>";
+				$message .="<br><br>You can Login into MyPortalX with the following details after activate your account.<br><br>";
+				$message .="User Name: ". $userRow['fld_username'] ."<br>";
+				$message .="Password: ". $userRow['fld_password'] ." <br>";
+				$message .="<br><br>Thank you,<br>Team MyPortalX";
+				$header = "From: MyPortalX <".$this->config->item("mail_from").">\r\n";
+				$header .= "MIME-Version: 1.0\r\n";
+				$header .= "Content-type: text/html\r\n";
+				$retval = 0;
+				try {
+					$retval = mail($to, $subject, $message, $header);
+					$response['status'] = 1;
+					$response['redirect'] = '';
+					$response['message'] = 'Mail Sent.';
+					$response['data'] = array();
+				}catch (Exception $e){
+					$response['status'] = 0;
+					$response['redirect'] = '';
+					$response['message'] = 'Not able to send the email.'.$e->getMessage();
+					$response['data'] = array();
+				}
+
+			}else
+            {
+				$response['status'] = 0;
+				$response['redirect'] = '';
+				$response['message'] = 'Your account is already activated.';
+				$response['data'] = array();
+			}
+		}else
+        {
+			$response['status'] = 0;
+			$response['redirect'] = '';
+			$response['message'] = 'Invalid username or password.';
+			$response['data'] = array();
+		}
+		echo json_encode($response);
+	}
+} </xmp></code></pre>
+        <p>login page model</p>
+        <code>application\models\Login_model.php</code>
+        <pre><code class="language-html"><xmp><?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+
+/* ----------------------------------------------------------------------------
+ * Easy!Appointments - Open Source Web Scheduler
+ *
+ * @package     EasyAppointments
+ * @author      A.Tselegidis <alextselegidis@gmail.com>
+ * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
+ * @link        http://easyappointments.org
+ * @since       v1.0.0
+ * ---------------------------------------------------------------------------- */
+
+/**
+ * Roles Model
+ *
+ * @package Models
+ */
+class Login_model extends CI_Model {
+    /**
+     * Class Constructor
+     */
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function login(){
+        $response = array();
+        if (checkVal('username') && checkVal('password')) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            $where ="(fld_username ='".$username."' OR fld_email ='".$username."') AND fld_password ='".$password."'";
+            //$geLoginQuery = $this->db->get_where("users", array('fld_username' => $username, 'fld_password' => $password));
+            $geLoginQuery = $this->db->get_where("users", $where);
+            if ($geLoginQuery->num_rows() == 0) {
+                $response['status'] = 0;
+                $response['redirect'] = 'login';
+                $response['message'] = 'Invalid username or password';
+                $response['data'] = array();
+            } else {
+                $userRow = $geLoginQuery->row_array();
+                if ($userRow['fld_varification'] == '0') {
+                    $response['status'] = 0;
+                    $response['message'] = "<i class='fa fa-warning'></i>&nbsp;Your Email address is not verified yet.<br><br> <button type='button' class='btn btn-block btn-primary' onclick='javascript:return resentverificaion(this);' data-loading-text=\"<i class='fa fa-spinner fa-spin '></i>\">Resend Verification e-mail</button>";
+                    $response['redirect'] = '';
+                    $response['data'] = array();
+                } else if ($userRow['fld_status'] == '1') {
+                    $newdata = array(
+                        'username' => $username,
+                        'user_id' => $userRow['fld_id'],
+                        'user_type' => $userRow['fld_user_type'],
+                        'varification_code' => $userRow['fld_varification'],
+                        'payment_status' => $userRow["fld_payment_status"],
+                        'due_date' => $userRow["fld_due_date"],
+                        'user_timezone' => $userRow["fld_timezone"],
+                        'logged_in' => TRUE
+                    );
+                    
+                    // echo "<pre>"; print_r($this->session); die;
+                    $response['status'] = 1;
+                    $response['redirect'] = strtolower($userRow['fld_user_type']);
+                    $response['message'] = 'Logged in successfully.';
+                    $response['data'] = $newdata;
+                } else {
+                    $response['status'] = 0;
+                    $response['redirect'] = 'login';
+                    $response['message'] = 'You are account is temporarily suspended please contact Administrator for re-activate it.';
+                    $response['data'] = array();
+                }
+            }
+        }
+        else{
+            $response['status'] = 0;
+            $response['redirect'] = 'login';
+            $response['message'] = 'Required parameters missing.';
+            $response['data'] = array();
+        }
+
+        return $response;
+    }
+}</xmp></code></pre>
+        <p>login page js</p>
+        <code>assets/js/fast-buddy.js</code>
+        <pre><code class="language-html"><xmp>$(function() {
+	home_url=$('#home_url').val();
+    .on('click','#get_login', function(){
+		   username=$('#get_username').val();
+		   the_password=$('#get_password').val();
+			$("#dvMessage").removeClass("alert alert-danger");
+			$("#dvMessage").html("");
+			// debugger
+           $.ajax({url: home_url+"get_login",
+				data: { 
+					"username": username, 
+					"password": the_password
+				},
+				dataType: "json",
+				type: "POST",
+		        success: function(response){
+				// debugger
+				if(response.status=='1') {
+					window.location.href = home_url+response.redirect;	
+			 	}else
+			 	{
+			 		$("#dvMessage").addClass("alert alert-danger");
+					$("#dvMessage").html(response.message);
+					$("#dvMessage").fadeIn();
+					return false;
+				}
+	        }
+		});		   
+	});
+    .on('click','#get_logout', function(){
+		   	var username=$(this).attr('username');
+		  	$.ajax({
+				url: home_url+"get_logout", 
+				data: { 
+						"username": username
+					},
+					dataType: "json",
+					type: "POST",
+			        success: function(response){
+				    if(response.status=='1') {
+						window.setTimeout(function()
+						{
+							// Move to a new location or you can do something else
+							window.location.href = home_url+"login";
+						}, 0000  );
+					}else{}
+	        	}
+			});
+	    });
+});</xmp></code></pre>
+        <h2>Forgot Password Page</h2>
+        <p>if user forgot there password. they change there password</p>
+        <img class="img-fluid" src="image/forgotpassword.png" alt="Login Page" height="100">
+        <br><br>
+        <p>Forgot Password Controller</p>
+        <code>application/controller/ForgotPassword.php</code>
+        <pre><code class="language-html"><xmp><?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class ForgotPassword extends CI_Controller {
+
+	/**
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see http://codeigniter.com/user_guide/general/urls.html
+	 */
+	 public function index()
+	{
+
+		$this->load->view('site/forgot-password');
+	}
+	 
+}
+</xmp></code></pre>
+        <p>Forgot Password View</p>
+        <code>application/view/site/forgot-password.php</code>
+        <pre><code class="language-html"><xmp><?php
+ error_reporting(0);
+ 
+ if(isset($_POST['send'])){
+     $inputemail=$_POST['email'];
+       
+                 $emailROw=$this->db->get_where('users',array('fld_email'=>$inputemail));
+                 if($emailROw->num_rows()>0){
+                 $data=$emailROw->row_array();
+                 $password=$data['fld_password'];
+                 $email=$data['fld_email'];
+                 $name = $data['fld_username'];
+                 $fld_rand_code = $data['fld_rand_code'];
+                  
+                 }
+                 if($email==$inputemail && $inputemail!==''){
+                 $message = "<table width='600' align='center' id='TbHeader' bgcolor='#400080' border='0' cellspacing='0' cellpadding='4'> <tr> <td align='center' id='TdHeader' bgcolor='#400080'> <p align='center'><font color='#ffffff' face='Arial, Helvetica, sans-serif' size='6'><strong>Welcome</strong></font></p></td></tr></table><table width='600' align='center' id='TbBodyRow' border='0' cellspacing='0' cellpadding='0'> <tr> <td id='TdBodyRow' valign='top' bgcolor='#ffffff'> <table width='100%' id='TbBody' bgcolor='#ffffff' border='0' cellspacing='0' cellpadding='4'> <tr> <td align='center' id='TdBody' bgcolor='#ffffff'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <p align='left'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><strong>Hi ".$name." &nbsp;<font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>&nbsp;</font></strong></font> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> <p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>We have received a  request to reset your password for your MyportalX account. Click on the link below to reset your password.</font></p><p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><a href='".base_url('Registration/forgot_password/'.$fld_rand_code)."' style='background-color: #33b5e5; padding: 5px 10px;text-decoration: none; color: #fff;border-radius: 5px;'>RESET PASSWORD</a></font></p> <p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>If you/your coach didn't request a password reset, you can simply ignore this email or contact us immediately at support@myportalx.com</p></font></p> <p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'></font> <p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><br></font></p> </p> </td></tr></table></td></tr></table><strong></strong><strong> </strong><strong> </strong> <table width='600' align='center' id='TbFooter' bgcolor='#eea000' border='0' cellspacing='0' cellpadding='4'> <tr> <td align='center' id='TdFooter' bgcolor='#eea000'> <div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'> <div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'><br></span></span></div> <div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'>Regards,</span>,<br style='color: rgb(0, 52, 89);'></span></div> <div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'>Team MyportalX</span></div> <div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'><br></span></div></div></td></tr></table>";
+                 $subject = "Password Reset";
+                 $header = "From:" . $this->config->item('mail_from') . "\r\n";
+                 $header .= "MIME-Version: 1.0\r\n";
+                 $header .= "Content-type: text/html\r\n";
+                 $retval = mail ($email,$subject,$message,$header);
+                         
+                            if( $retval == true ){
+                               //redirect(base_url('login'));
+                                echo "<div class=\"alert alert-success\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button> <strong>Well done!</strong> Your password have been send to your email id. Please check your email. </div>";
+                            }else{
+                                echo "<div class=\"alert alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><strong>Oh snap!</strong> Change a few things up and try submitting again.</div>";
+                            }
+                       
+     }else{
+           echo "<div class=\"alert alert-danger\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><strong>E-mail</strong> not match</div>";
+
+     }
+         
+ }
+?>
+<!DOCTYPE html>
+<html lang="en" class="body-full-height">
+    <head>        
+        <!-- META SECTION -->
+        <title><?php echo $this->config->item('site_name');?> - Forgot Password</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <link rel="icon" href="<?php echo base_url()."assets/img/";?>favicon.png" type="image/x-icon" />
+        <!-- END META SECTION -->
+        
+        <!-- CSS INCLUDE -->        
+        <link rel="stylesheet" type="text/css" id="theme" href="<?php echo base_url()."assets/";?>css/theme-default.css"/>
+        <!-- EOF CSS INCLUDE -->                                     
+    </head>
+    <body>
+        
+        <div class="login-container">
+            <div class="login-box animated fadeInDown">
+                <div class="login-logo"></div>
+                <div class="login-body">
+                    <div class="login-title"><strong>Forgot</strong> Password?</div>
+                    <form action="#" class="form-horizontal" method="post">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="text" name="email" class="form-control" placeholder="email@domain.com"/>
+                        </div>
+                    </div>                                                            
+                    <div class="form-group push-up-20">
+                        <div class="col-md-6 pull-left">
+                            <a href="<?php echo base_url().'login' ?>" class="btn btn-link">< back to Login</a>
+                        </div>
+                        <div class="col-md-6">
+                            <button name="send" class="btn btn-danger btn-block">Send Password</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <div class="registration-footer">
+                    <div style="color:#909090; text-align:center;">
+                        Copyright © <?php echo date("Y");?> <?php echo $this->config->item('site_name');?>. <br>All rights reserved
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+        </xmp></code></pre>
+
+        <p>Forgot Password Email click controller</p>
+        <code>application/controllers/Registration.php</code>
+        <pre><code class="language-html"><xmp><?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Registration extends CI_Controller {
+    public function forgot_password($passkey="")
+    {
+        $user_id = "";
+        $error_message = "";
+        $success_message = "";
+		if($passkey =="")
+		{
+			$error_message="Something wrong with your verification link.<br><br>Please Click again on the verification link in the email.";
+		}else 
+		{
+			$user = $this->db->get_where("users", array('fld_rand_code' => $passkey));
+			if ($user->num_rows() > 0) 
+			{
+				$row = $user->row();
+				$user_type = $row->fld_user_type;
+				$user_id = $row->fld_id;
+			}else
+			{
+				$error_message="Invalid verification link.<br><br>Please Click again on the verification link in the email.";
+			}
+		}
+		if (isset($_POST['send'])) 
+		{
+			$password = $_POST['Pwd'];
+			// echo $password;
+  			$newData = array(
+      			'fld_password' => $password                    
+      		); 
+		    $this->db->where('fld_id', $user_id);
+		    $this->db->update('users', $newData);
+		    if($this->db->affected_rows())
+		    {
+	        	$success_message = "success";
+	      	}else
+	      	{
+	        	echo "<div   class=\"alert alert-danger\"> Database error.<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a></div>";
+	      	}
+		}
+		$view =array(
+			"user_id"=> $user_id,
+			"user_type" => $user_type,
+			"error_message" => $error_message,
+			"success_message" => $success_message
+		);
+
+		$this->load->view('site/forgot_passwords',$view);
+    }
+}</xmp></code></pre>
+        <p>Forgot Password Email click view</p>
+        <code>application/view/site/forgot_passwords.php</code>
+        <pre><code class="language-html"><xmp><?php error_reporting(0);
+?>
+<!DOCTYPE html>
+<html lang="en" class="body-full-height">
+    <head>        
+        <!-- META SECTION -->
+        <title><?php echo $this->config->item('site_name');?> - Password Recover</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <link rel="icon" href="<?php echo base_url()."assets/img/";?>favicon.png" type="image/x-icon" />
+        <!-- END META SECTION -->
+        
+        <!-- CSS INCLUDE -->        
+        <link rel="stylesheet" type="text/css" id="theme" href="<?php echo base_url()."assets/";?>css/theme-default.css"/>
+        <!-- EOF CSS INCLUDE -->                                     
+    </head>
+    <body>
+        
+        <div class="login-container">
+            <div class="login-box animated fadeInDown">
+                <div class="login-logo"></div>
+                <div class="login-body">
+                    <?php if($success_message ==""){?>
+                    <div class="login-title">Choose A New Password?</div>
+                    <!-- <div style="color: #fff;font-size: 10px;">Create a New password that is at lease 6 characters long. A strong password has a combination of letters, digits and punctuation marks.</div> -->
+                    <form action="#" class="form-horizontal" method="post">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="Password" name="Pwd" class="form-control" placeholder="Enter New Password" />
+                        </div>
+                    </div>                                                            
+                    <div class="form-group push-up-20">
+                        <div class="col-md-6 pull-left">
+                            <a href="<?php echo base_url().'login' ?>" class="btn btn-link">< back to Login</a>
+                        </div>
+                        <div class="col-md-6">
+                            <button name="send" class="btn btn-danger btn-block">continue</button>
+                        </div>
+                    </div>
+                    </form>
+                    <?php } else {?>
+                        <div class="login-title">Password Change Successfullly!!</div>
+                        <div class="btn-link">Login your account - <a href="<?= base_url('login')?>" class="btn btn-success">Login</a></div>
+                    <?php } ?>
+                </div>
+                <div class="registration-footer">
+                    <div style="color:#909090; text-align:center;">
+                        Copyright © <?php echo date("Y");?> <?php echo $this->config->item('site_name');?>. <br>All rights reserved
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+       </xmp></code></pre>
+        <p>Registration Controller</p>
+        <code>application/controllers/Registration.php</code>
+        <pre><code class="language-html"><xmp><?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Registration extends CI_Controller {
+
+	/**
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see http://codeigniter.com/user_guide/general/urls.html
+	 */
+	public function index()
+	{
+		$first_name ="";
+		$email = "";
+		$error_message ="";
+		$success_message = "";
+		$password ="";
+		$confirmpassword = "";
+		$sponsor ="";
+		$sponsor2 ="";
+		if(!isset($_POST["subscription_plan"]))
+			$subscription_plan = 1;
+		else
+			$subscription_plan = $_POST["subscription_plan"];
+
+		if(isset($_POST['submit'])) {
+			$first_name = $_POST['first_name'];
+			$email = $_POST['email'];
+			$password = $_POST['password'];
+			$confirmpassword = $_POST['confirm_password'];
+			$sponsor = $_POST['sponsor'];
+			$sponsor2 = $_POST['sponsor2'];
+			$rand_code = rand();
+
+			//validate username
+			$getData=$this->db->get_where('users',array('fld_email'=>$email));
+
+			if($getData->num_rows() >0)
+			{
+				$error_message = "This email address is already registered with us.";
+			}else{
+				$newData = array(
+					'fld_first_name' => $first_name,
+					'fld_last_name' => '',
+					'fld_email' => $email,
+					'fld_username' => $email,
+					'fld_password' => $password,
+					'fld_program' => $subscription_plan,
+					'fld_sponsor' => $sponsor,
+					'fld_sponsor2' => $sponsor2,
+					'fld_user_type' => 'member',
+					'fld_create_by' => 'direct',
+					'fld_status' => '0',
+					'fld_rand_code' =>$rand_code,
+					'fld_varification' =>'0',
+					'fld_added_date' =>time(),
+					'fld_modified_date' => ''
+				);
+				$this->db->insert('users', $newData);
+				$insert_id = $this->db->insert_id();
+				if($this->db->affected_rows()){
+
+					//add teacher default working timing
+					$ea_userSetting = array(
+						'fld_userid' => $insert_id,
+						'working_plan' =>'{"monday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"tuesday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"wednesday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"thursday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"friday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"saturday":null,"sunday":null}',
+						'notifications' =>'1',
+						'google_sync' =>  0,
+						'google_calendar' => null,
+						'google_token' => null,
+						'sync_past_days' => '5',
+						'sync_future_days'=> '5'
+					);
+					$this->db->insert('ea_user_settings', $ea_userSetting);
+
+					$ea_categories = array(
+						'fld_userid' =>$insert_id,
+						'name'=>'Free Services',
+						'description' => 'Free Services'
+					);
+					$this->db->insert('ea_service_categories', $ea_categories);
+					$cat_id = $this->db->insert_id();
+
+					$ea_services = array(
+						'name' =>$insert_id,
+						'duration'=>'30',
+						'price' => '0',
+						'currency' => '$',
+						'description' => '',
+						'id_service_Categories' => $cat_id
+					);
+					$this->db->insert('ea_services', $ea_services);
+
+					$massage = "<head><meta http-equiv='Content-Type' content='text/html; charset=windows-1252'><meta name='GENERATOR' content='MSHTML 11.00.10570.1001'></head><body bgcolor='#ffffff'><strong></strong><strong> </strong><strong></strong><table width='600' align='center' id='TbHeader' bgcolor='#400080' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdHeader' bgcolor='#400080'><p align='center'><font color='#ffffff' face='Arial, Helvetica, sans-serif' size='6'><strong>Welcome</strong></font></p></td></tr></table><table width='600' align='center' id='TbBodyRow' border='0' cellspacing='0' cellpadding='0'><tr><td id='TdBodyRow' valign='top' bgcolor='#ffffff'><table width='100%' id='TbBody' bgcolor='#ffffff' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdBody' bgcolor='#ffffff'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p align='left'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><strong>Hi ".$first_name."&nbsp;<font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>&nbsp;</font></strong></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p><p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>Thanks for getting started with MyportalX!<br>To start using MyportalX click on the link below to verify your email address.<br><br><a href='".base_url("registration/email_verification/".$rand_code)."' >Click on this link to verify</a><br><br>Here is your Login Credentials -<br><br>Username - ".$email."<br>Password - ".$password ." </font></p><br></font></font></font></p><p align='left'><br></p></td></tr></table></td></tr></table><strong></strong><strong></strong><strong> </strong><table width='600' align='center' id='TbFooter' bgcolor='#eea000' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdFooter' bgcolor='#eea000'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'><br></span></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'>Regards,</span>,<br style='color: rgb(0, 52, 89);'></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'>Team MyportalX</span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'><br></span></div></div></td></tr></table>";       
+                 $subject = "You’re almost there!";  
+                 $header = "From:" . $this->config->item('mail_from') . "\r\n";
+                 $header .= "MIME-Version: 1.0\r\n";
+                 $header .= "Content-type: text/html\r\n";
+                 $retval = mail ($email,$subject,$massage,$header);
+			        $success_message ="success";
+					$time = strtotime("now");
+		$this->db->query("INSERT INTO `mys_status`(`user_id`,`ustatus`) VALUES ('".$insert_id."','".$time."')");
+				}
+			}
+		}
+
+		$view =array(
+			"subscription_plan" => $subscription_plan,
+			"first_name" => $first_name,
+			"email" => $email,
+			"password" => $password,
+			"confirm_password" =>$confirmpassword,
+			"sponsor" =>$sponsor,
+			"sponsor2" =>$sponsor2,
+			"error_message" => $error_message,
+			"success_message" => $success_message
+		);
+
+
+		$this->load->view('site/registration',$view);
+	}
+	public function email_verification($passkey="")
+	{
+
+		$error_message="";
+		$success_message="";
+		$user_name = "";
+		$user_type="";
+		if($passkey =="")
+			$error_message="Something wrong with your verification link.<br><br>Please Click again on the verification link in the email.";
+		else {
+			$user = $this->db->get_where("users", array('fld_rand_code' => $passkey));
+
+			if ($user->num_rows() > 0) {
+				$row = $user->row();
+				if($row->fld_varification == "1"){
+					$error_message="You have already verified your email address.<br><br>You can now login with your MyportalX credentials.<br><br> <button style='background:#000;padding:5px 50px'> <a style='color:#fff' href='".base_url() ."login/'>GET STARTED</a></button>";
+					$this->session->sess_destroy();
+				}
+				else{
+					$this->db->set("fld_varification","1");
+					$this->db->set("fld_status","1");
+					$this->db->where(array("fld_id"=>$row->fld_id,"fld_rand_code"=>$passkey));
+					$updated = $this->db->update("users");
+					if($updated) {
+						$user_type = $row->fld_user_type;
+						$user_name = $row->fld_first_name . ' ' . $row->fld_last_name;
+						$parent = $row->fld_parent;
+						if(trim($user_name) =="")
+							$user_name = $row->fld_username;
+						$newdata = array(
+							'username' => $user_name,
+							'user_id' => $row->fld_id,
+							'user_type' => $user_type,
+							'varification_code' => $row->fld_rand_code,
+							'user_timezone' => $row->fld_timezone,
+							'logged_in' => TRUE
+						);
+						$this->session->set_userdata($newdata);
+						$success_message = "done";
+
+						$coach=$this->db->get_where('users',array('fld_id'=>$parent));
+				        if ($coach->num_rows()>0) 
+				        {
+				        	$row=$coach->row_array();
+					        $coachName = $row["fld_first_name"] . " " . $row["fld_last_name"];
+					        $coachemail = $row["fld_email"];
+				        }
+
+				        $msg = "<head><meta http-equiv='Content-Type' content='text/html; charset=windows-1252'><meta name='GENERATOR' content='MSHTML 11.00.10570.1001'></head><body bgcolor='#ffffff'><strong></strong><strong> </strong><strong></strong><table width='600' align='center' id='TbHeader' bgcolor='#400080' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdHeader' bgcolor='#400080'><p align='center'><font color='#ffffff' face='Arial, Helvetica, sans-serif' size='6'><strong>Welcome</strong></font></p></td></tr></table><table width='600' align='center' id='TbBodyRow' border='0' cellspacing='0' cellpadding='0'><tr><td id='TdBodyRow' valign='top' bgcolor='#ffffff'><table width='100%' id='TbBody' bgcolor='#ffffff' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdBody' bgcolor='#ffffff'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p align='left'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><strong>Hi ".$coachName." &nbsp;<font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>&nbsp;</font></strong></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p><p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>New Client ".$first_name." is been added to your account.</font></p><br></font></font></font></p><p align='left'><br></p></td></tr></table></td></tr></table><strong></strong><strong></strong><strong> </strong><table width='600' align='center' id='TbFooter' bgcolor='#eea000' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdFooter' bgcolor='#eea000'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'><br></span></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'>Regards,</span>,<br style='color: rgb(0, 52, 89);'></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'>Team MyportalX</span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'><br></span></div></div></td></tr></table>";
+                 $sub = "New Client add";
+                 $head = "From:" . $this->config->item('mail_from') . "\r\n";
+                 $head .= "MIME-Version: 1.0\r\n";
+                 $head .= "Content-type: text/html\r\n";
+                 mail($coachemail, $sub, $msg, $head);
+
+                 $nots=array(
+
+            'sender_id' => $row->fld_id,
+
+            'reciver_id' => $parent,
+
+            'message' => "New Client ".$first_name." is been added to your account.",
+
+            'urls' => "create_client",
+
+            'fld_date' => time()
+
+         );
+
+
+
+         $this->db->insert('notification',$nots);
+
+					}
+					else
+						$error_message ="Something wrong with activation. Please try again or check with your coach.";
+				}
+
+
+			}
+			else{
+				$error_message="Invalid verification link.<br><br>Please Click again on the verification link in the email.";
+			}
+		}
+		$view =array(
+			"user_name"=> $user_name,
+			"user_type" => $user_type,
+			"error_message" => $error_message,
+			"success_message" => $success_message
+		);
+
+		$this->load->view('site/email-verification',$view);
+	}
+    
+    public function freeregistration(){
+        $this->load->config('email');
+        $this->load->library('email');
+        $this->load->library('encryption');
+        
+    	$first_name ="";
+		$email = "";
+		$error_message ="";
+		$success_message = "";
+		$password ="";
+		$confirmpassword = "";
+		$sponsor ="";
+		$sponsor2 ="";
+		if(!isset($_POST["subscription_plan"]))
+			$subscription_plan = 1;
+		else
+			$subscription_plan = $_POST["subscription_plan"];
+
+		if(isset($_POST['submit'])) {
+			$first_name = $_POST['first_name'];
+			$email = $_POST['email'];
+			$password = $_POST['password'];
+			$confirmpassword = $_POST['confirm_password'];
+			$rand_code = rand();
+
+			//validate username
+			$getData=$this->db->get_where('users',array('fld_email'=>$email));
+
+			if($getData->num_rows() >0)
+			{
+				$error_message = "This email address is already registered with us.";
+			}else{
+				$newData = array(
+					'fld_first_name' => $first_name,
+					'fld_last_name' => '',
+					'fld_email' => $email,
+					'fld_username' => $first_name,
+					'fld_password' => $password,
+					'fld_program' => $subscription_plan,
+					'fld_user_type' => 'member',
+					'fld_create_by' => 'yogiccoach',
+					'fld_status' => '0',
+					'fld_parent' => '680',
+					'fld_sponsor' => "",
+					'fld_sponsor2' => "",
+					'fld_payment_status' => '1',
+					'fld_rand_code' =>$rand_code,
+					'fld_varification' =>'0',
+					'fld_added_date' =>time(),
+					'fld_modified_date' => '',
+					'fld_Energy_Detox_verified' => '1',
+					'fld_Gratitude_verified' => '1',
+					'fld_Appointment_verified' => '1',
+					'fld_Daily_Score_verified' => '1',
+					'fld_Messages_verified' => '1',
+					'fld_Chakra_verified' => '1',
+					'fld_Wheel_verified' => '1',
+					'fld_Intention_verified' => '1',
+					'fld_Coaching_verified' => '1'
+				);
+				$this->db->insert('users', $newData);
+				$insert_id = $this->db->insert_id();
+				if($this->db->affected_rows()){
+
+					//add teacher default working timing
+					$ea_userSetting = array(
+						'fld_userid' => $insert_id,
+						'working_plan' =>'{"monday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"tuesday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"wednesday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"thursday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"friday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"saturday":null,"sunday":null}',
+						'notifications' =>'1',
+						'google_sync' =>  0,
+						'google_calendar' => null,
+						'google_token' => null,
+						'sync_past_days' => '5',
+						'sync_future_days'=> '5'
+					);
+					$this->db->insert('ea_user_settings', $ea_userSetting);
+
+					$coaching_form_status = array(
+						'fld_user_id' => $insert_id,
+						'fld_form_id' => '27',
+						"assign_date"=>time(),
+						"completed_date"=>'',
+						"last_modified" =>date('Y-m-d H:i:s')
+					);
+
+					$this->db->insert('coaching_form_user', $coaching_form_status);
+
+					$market_form_status = array(
+						'fld_user_id' => $insert_id,
+						'fld_form_id' => '1',
+						"assign_date"=>time(),
+						"completed_date"=>'',
+						"last_modified" =>date('Y-m-d H:i:s'),
+						"status" => 0
+					);
+
+					$this->db->insert('marketing_form_user', $market_form_status);
+
+					$ea_categories = array(
+						'fld_userid' =>$insert_id,
+						'name'=>'Free Services',
+						'description' => 'Free Services'
+					);
+					$this->db->insert('ea_service_categories', $ea_categories);
+					$cat_id = $this->db->insert_id();
+
+					$ea_services = array(
+						'name' =>$insert_id,
+						'duration'=>'30',
+						'price' => '0',
+						'currency' => '$',
+						'description' => '',
+						'id_service_Categories' => $cat_id
+					);
+					$this->db->insert('ea_services', $ea_services);
+					$massage = "<head><meta http-equiv='Content-Type' content='text/html; charset=windows-1252'><meta name='GENERATOR' content='MSHTML 11.00.10570.1001'></head><body bgcolor='#ffffff'><strong></strong><strong> </strong><strong></strong><table width='600' align='center' id='TbHeader' bgcolor='#400080' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdHeader' bgcolor='#400080'><p align='center'><font color='#ffffff' face='Arial, Helvetica, sans-serif' size='6'><strong>Welcome</strong></font></p></td></tr></table><table width='600' align='center' id='TbBodyRow' border='0' cellspacing='0' cellpadding='0'><tr><td id='TdBodyRow' valign='top' bgcolor='#ffffff'><table width='100%' id='TbBody' bgcolor='#ffffff' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdBody' bgcolor='#ffffff'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p align='left'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><strong>Hi ".$first_name."&nbsp;<font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>&nbsp;</font></strong></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p><p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>Thanks for getting started with MyportalX!<br>To start using MyportalX click on the link below to verify your email address.<br><br><a href='".base_url("registration/email_verification/".$rand_code)."' >Click on this link to verify</a><br><br>Here is your Login Credentials -<br><br>Username - ".$email."<br>Password - ".$password ." </font></p><br></font></font></font></p><p align='left'><br></p></td></tr></table></td></tr></table><strong></strong><strong></strong><strong> </strong><table width='600' align='center' id='TbFooter' bgcolor='#eea000' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdFooter' bgcolor='#eea000'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'><br></span></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'>Regards,</span>,<br style='color: rgb(0, 52, 89);'></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'>Team MyportalX</span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'><br></span></div></div></td></tr></table>"; 
+                 $subject = "You’re almost there!";  
+                //  $header = "From:" . $this->config->item('mail_from') . "\r\n";
+                //  $header .= "MIME-Version: 1.0\r\n";
+                //  $header .= "Content-type: text/html\r\n";
+                //  $retval = mail ($email,$subject,$massage,$header);
+                 $this->email->set_newline("\r\n");
+        $this->email->from('info@myportalx.com');
+        $this->email->to($email);
+        $this->email->subject($subject);
+        $this->email->message($massage);
+
+        $retval = $this->email->send();
+
+                 $msg = "<head><meta http-equiv='Content-Type' content='text/html; charset=windows-1252'><meta name='GENERATOR' content='MSHTML 11.00.10570.1001'></head><body bgcolor='#ffffff'><strong></strong><strong> </strong><strong></strong><table width='600' align='center' id='TbHeader' bgcolor='#400080' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdHeader' bgcolor='#400080'><p align='center'><font color='#ffffff' face='Arial, Helvetica, sans-serif' size='6'><strong>Welcome</strong></font></p></td></tr></table><table width='600' align='center' id='TbBodyRow' border='0' cellspacing='0' cellpadding='0'><tr><td id='TdBodyRow' valign='top' bgcolor='#ffffff'><table width='100%' id='TbBody' bgcolor='#ffffff' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdBody' bgcolor='#ffffff'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p align='left'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'><strong>Hi Rajah Sharma &nbsp;<font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>&nbsp;</font></strong></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p><p align='justify' style='margin-right: 0px;'><font color='#000000' face='Verdana, Arial, Helvetica, sans-serif' size='3'>New Client ".$first_name."  is been added to Anmol account.</font></p><br></font></font></font></p><p align='left'><br></p></td></tr></table></td></tr></table><strong></strong><strong></strong><strong> </strong><table width='600' align='center' id='TbFooter' bgcolor='#eea000' border='0' cellspacing='0' cellpadding='4'><tr><td align='center' id='TdFooter' bgcolor='#eea000'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'><br></span></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-size: inherit; font-weight: bold; text-decoration: inherit;'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: inherit; text-decoration: inherit;'>Regards,</span>,<br style='color: rgb(0, 52, 89);'></span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'>Team MyportalX</span></div><div style='margin: 0px; padding: 0px; text-align: center; color: rgb(0, 52, 89);'><span style='color: rgb(0, 52, 89); line-height: inherit; font-family: arial; font-size: inherit; font-style: normal; font-weight: bold; text-decoration: inherit;'><br></span></div></div></td></tr></table>";
+                 $sub = "New Client add";
+                 $head = "From:" . $this->config->item('mail_from') . "\r\n";
+                 $head .= "MIME-Version: 1.0\r\n";
+                 $head .= "Content-type: text/html\r\n";
+                 mail('rajahsharma2@gmail.com', $sub, $msg, $head);
+
+					$success_message ="success";
+					$time = strtotime("now");
+		$this->db->query("INSERT INTO `mys_status`(`user_id`,`ustatus`) VALUES ('".$insert_id."','".$time."')");
+				}
+			}
+		}
+		$view =array(
+			"subscription_plan" => $subscription_plan,
+			"first_name" => $first_name,
+			"email" => $email,
+			"password" => $password,
+			"confirm_password" =>$confirmpassword,
+			"user_type" => 'member',
+			"error_message" => $error_message,
+			"success_message" => $success_message
+		);
+    	$this->load->view("site/free_tryal",$view);
+    }
+    
+    
+    public function become_coach(){
+        $first_name ="";
+		$email = "";
+		$error_message ="";
+		$success_message = "";
+		$password ="";
+		$confirmpassword = "";
+		$sponsor ="";
+		$sponsor2 ="";
+		if(!isset($_POST["subscription_plan"]))
+			$subscription_plan = 1;
+		else
+			$subscription_plan = $_POST["subscription_plan"];
+
+		if(isset($_POST['submit'])) {
+			$first_name = $_POST['first_name'];
+			$email = $_POST['email'];
+			$password = $_POST['password'];
+			$confirmpassword = $_POST['confirm_password'];
+			$rand_code = rand();
+
+			//validate username
+			$getData=$this->db->get_where('users',array('fld_email'=>$email));
+
+			if($getData->num_rows() >0)
+			{
+				$error_message = "This email address is already registered with us.";
+			}else{
+				$newData = array(
+					'fld_first_name' => $first_name,
+					'fld_last_name' => '',
+					'fld_email' => $email,
+					'fld_username' => $first_name,
+					'fld_password' => $password,
+					'fld_program' => $subscription_plan,
+					'fld_user_type' => 'yogiccoach',
+					'fld_create_by' => 'direct',
+					'fld_status' => '1',
+					'fld_parent' => '0',
+					'fld_sponsor' => "",
+					'fld_sponsor2' => "",
+					'fld_payment_status' => '1',
+					'fld_rand_code' =>$rand_code,
+					'fld_varification' =>'1',
+					'fld_added_date' =>time(),
+					'fld_modified_date' => '',
+					'fld_Energy_Detox_verified' => '0',
+					'fld_Gratitude_verified' => '0',
+					'fld_Appointment_verified' => '0',
+					'fld_Daily_Score_verified' => '0',
+					'fld_Messages_verified' => '0',
+					'fld_Chakra_verified' => '0',
+					'fld_Wheel_verified' => '0',
+					'fld_Intention_verified' => '0',
+					'fld_Coaching_verified' => '0'
+				);
+				$this->db->insert('users', $newData);
+				$insert_id = $this->db->insert_id();
+				if($this->db->affected_rows()){
+
+					//add teacher default working timing
+					$ea_userSetting = array(
+						'fld_userid' => $insert_id,
+						'working_plan' =>'{"monday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"tuesday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"wednesday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"thursday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"friday":{"start":"09:00","end":"18:00","breaks":[{"start":"14:30","end":"15:00"}]},"saturday":null,"sunday":null}',
+						'notifications' =>'1',
+						'google_sync' =>  0,
+						'google_calendar' => null,
+						'google_token' => null,
+						'sync_past_days' => '5',
+						'sync_future_days'=> '5'
+					);
+					$this->db->insert('ea_user_settings', $ea_userSetting);
+
+					$ea_categories = array(
+						'fld_userid' =>$insert_id,
+						'name'=>'Free Services',
+						'description' => 'Free Services'
+					);
+					$this->db->insert('ea_service_categories', $ea_categories);
+					$cat_id = $this->db->insert_id();
+
+					$ea_services = array(
+						'name' =>$insert_id,
+						'duration'=>'30',
+						'price' => '0',
+						'currency' => '$',
+						'description' => '',
+						'id_service_Categories' => $cat_id
+					);
+					$this->db->insert('ea_services', $ea_services);
+					$success_message ="success";
+					$time = strtotime("now");
+		$this->db->query("INSERT INTO `mys_status`(`user_id`,`ustatus`) VALUES ('".$insert_id."','".$time."')");
+				}
+			}
+		}
+		$view =array(
+			"subscription_plan" => $subscription_plan,
+			"first_name" => $first_name,
+			"email" => $email,
+			"password" => $password,
+			"confirm_password" =>$confirmpassword,
+			"user_type" => 'member',
+			"error_message" => $error_message,
+			"success_message" => $success_message
+		);
+    	$this->load->view("site/coach",$view);
+    }
+}</xmp></code></pre>
+        <p>Registration View</p>
+        <code>application/views/site/Registration.php</code>
+        <pre><code class="language-html"><xmp> <?php $this->load->view('site/header');?>
+ <style>
+ .boost {
+     color: #fff;
+     font-size: 28px;
+    margin: 8px 0 0;
+    padding-left: 200px;
+    text-align: center;
+}
+ </style>
+
+ <link rel="stylesheet" type="text/css"   href="<?php echo base_url()."assets/";?>css/fast-buddy.css"/>
+    <!-- PAGE CONTENT WRAPPER -->
+ <div class="page-content-wrap">
+       <div class="row">
+         <div class="col-md-12">
+           <div class="panel panel-default">
+               <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-5 col-lg-offset-1"><strong>
+                                <?php if($error_message !="") echo "<i style='color:red'>".$error_message."</i>";?>
+                            </strong></div>
+                    </div>
+
+
+                         <div class="row" style="padding-top:0px;">
+
+                              <div class="col-md-6">
+                                <img src="<?php echo base_url()."assets/";?>img/portal3Dbox.png" class="img-responsive" style="padding-left:50px; padding-top:20px;">
+                            </div>
+                                        <!-- step 1 -->
+                            <div class="col-md-6"  id="hide_div">
+                                    <div class="registration-container">
+                                            <div class="registration-box animated fadeInDown">
+
+                                                <div class="registration-body">
+                                                <?php if($success_message ==""){?>
+                                                    <div class="registration-title"><strong>Registration</strong>, use form below</div>
+
+                                                    <form action="#" class="form-horizontal" method="post" id="jvalidate" role="form">
+
+                                                    <!--<h4>Personal info</h4>-->
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="text" name="first_name" class="form-control" placeholder="Name *"  value="<?php echo $first_name;?>"  maxlength="50" required/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="email" name="email" class="form-control" placeholder="E-mail *" value="<?php echo $email;?>"  required/>
+                                                        </div>
+                                                    </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="password" name="password"  id="password" class="form-control" placeholder="Password *" value="<?php echo $password;?>"  max="40" required/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password *" value="<?php echo $confirm_password;?>"  max="40" required/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="hidden" name="sponsor" class="form-control" placeholder="Sponsor 1(if any)" value="<?php echo $sponsor;?>" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="hidden" name="sponsor2" class="form-control" placeholder="Sponsor 2 (if any)" value="<?php echo $sponsor2;?>" />
+                                                            </div>
+                                                        </div>
+                                                    <div class="form-group push-up-30">
+
+                                                        <div class="col-md-6">
+                                                       <input type="submit" name="submit" id="step_first" class="btn btn-danger btn-block" value="Sign Up"/>
+                                                        </div>
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                                <script>
+                                                    var password = document.getElementById("password")
+                                                        , confirm_password = document.getElementById("confirm_password");
+
+                                                    function validatePassword(){
+                                                        if(password.value != confirm_password.value) {
+                                                            confirm_password.setCustomValidity("Passwords Don't Match");
+                                                        } else {
+                                                            confirm_password.setCustomValidity('');
+                                                        }
+                                                    }
+
+                                                    password.onchange = validatePassword;
+                                                    confirm_password.onkeyup = validatePassword;
+                                                </script>
+                                                <?php } else {?>
+                                                    <div class="registration-title"><strong>Verify</strong>, your Email Address</div>
+                                                    <div class="clearfix"></div>
+                                                    <div>
+                                                        <input type="hidden"  id="get_username" value="<?php echo $email;?>"/>
+                                                        <input type="hidden" id="get_password" value="<?php echo $password;?>" />
+                                                        A verification email has been sent to your given email address.<br>
+                                                        Click on the verification link in the email to verify your Email address.
+                                                        <br><br>
+                                                        Please check your <strong>Spam</strong> or <strong>Junk</strong> email folders if you do not see the email within the next 2 minutes.
+                                                        <br><br>
+                                                        If you still not received the email, click on the button below to resend the verification mail.
+                                                        <br><br>
+                                                        <button type="button" class="btn btn-primary" onclick="javascript:return resentverificaion(this);" >Resend verification mail</button>
+                                                        <br><br>
+                                                        <div id="dvMessage"></div>
+                                                    </div>
+                                                    <script>
+                                                        $(document).ready(function(){
+
+                                                        });
+                                                        function resentverificaion(obj){
+                                                            //$(this).html("<img src='/assets/imgs/");
+                                                            _username = $("#get_username").val();
+                                                            _password = $("#get_password").val();
+
+                                                            $(obj).html("Sending..");
+                                                            $.ajax({url: home_url+"login/send_verification_mail",
+                                                                data: {
+                                                                    "username": _username,
+                                                                    "password": _password
+                                                                },
+                                                                dataType: "json",
+                                                                type: "POST",
+                                                                success: function(response){
+
+                                                                    if(response.status=='1') {
+
+                                                                        $("#dvMessage").removeClass("alert alert-danger");
+                                                                        $("#dvMessage").addClass("alert alert-success");
+                                                                        $("#dvMessage").html("Mail sent").show();
+                                                                        $("#dvMessage").fadeOut(3000);
+                                                                        $(obj).html("Resend verification mail");
+                                                                    }
+                                                                    else{
+
+                                                                        $("#dvMessage").addClass("alert alert-danger");
+                                                                        $("#dvMessage").html(response.message).show();
+                                                                        $(obj).html("Resend verification mail");
+                                                                        return false;
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+
+                                                    </script>
+                                                <?php }?>
+
+                                            </div>
+
+                                    </div>
+                           </div>
+                       </div>
+                </div> <!-- Body Panel -->
+           </div>
+        </div>
+        <!-- PAGE CONTENT WRAPPER -->
+      </div>
+            <!-- END PAGE CONTENT -->
+ </div>
+
+ <?php
+ $this->load->view('site/footer');
+ ?>
+</xmp></code></pre>
+        <code>application/views/site/free_tryal.php</code>
+        <pre><code class="language-html"><xmp> <?php $this->load->view('site/header');?>
+ <style>
+ .boost {
+     color: #fff;
+     font-size: 28px;
+    margin: 8px 0 0;
+    padding-left: 200px;
+    text-align: center;
+}
+ </style>
+
+ <link rel="stylesheet" type="text/css"   href="<?php echo base_url()."assets/";?>css/fast-buddy.css"/>
+    <!-- PAGE CONTENT WRAPPER -->
+ <div class="page-content-wrap">
+       <div class="row">
+         <div class="col-md-12">
+           <div class="panel panel-default">
+               <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-5 col-lg-offset-1"><strong>
+                                <?php if($error_message !="") echo "<i style='color:red'>".$error_message."</i>";?>
+                            </strong></div>
+                    </div>
+
+
+                         <div class="row" style="padding-top:0px;">
+
+                              <div class="col-md-6">
+                                <img src="<?php echo base_url()."assets/";?>img/portal3Dbox.png" class="img-responsive" style="padding-left:50px; padding-top:20px;">
+                            </div>
+                                        <!-- step 1 -->
+                            <div class="col-md-6"  id="hide_div">
+                                    <div class="registration-container">
+                                            <div class="registration-box animated fadeInDown">
+
+                                                <div class="registration-body">
+                                                <?php if($success_message ==""){?>
+                                                    <div class="registration-title"><strong>Registration</strong>, use form below</div>
+
+                                                    <form action="#" class="form-horizontal" method="post" id="jvalidate" role="form">
+
+                                                    <!--<h4>Personal info</h4>-->
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="text" name="first_name" class="form-control" placeholder="Name *"  value="<?php echo $first_name;?>"  maxlength="50" required/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="email" name="email" class="form-control" placeholder="E-mail *" value="<?php echo $email;?>"  required/>
+                                                        </div>
+                                                    </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="password" name="password"  id="password" class="form-control" placeholder="Password *" value="<?php echo $password;?>"  max="40" required/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password *" value="<?php echo $confirm_password;?>"  max="40" required/>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    <div class="form-group push-up-30">
+
+                                                        <div class="col-md-6">
+                                                       <input type="submit" name="submit" id="step_first" class="btn btn-danger btn-block" value="Sign Up"/>
+                                                        </div>
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                                <script>
+                                                    var password = document.getElementById("password")
+                                                        , confirm_password = document.getElementById("confirm_password");
+
+                                                    function validatePassword(){
+                                                        if(password.value != confirm_password.value) {
+                                                            confirm_password.setCustomValidity("Passwords Don't Match");
+                                                        } else {
+                                                            confirm_password.setCustomValidity('');
+                                                        }
+                                                    }
+
+                                                    password.onchange = validatePassword;
+                                                    confirm_password.onkeyup = validatePassword;
+                                                </script>
+                                                <?php } else {?>
+<div class="registration-title"><strong style="color: #fe9720;font-size: 35px;">VERIFY YOUR EMAIL!</strong></div>
+                                                    <div class="clearfix"></div>
+                                                    <div>
+                                                        <input type="hidden"  id="get_username" value="<?php echo $email;?>"/>
+                                                        <input type="hidden" id="get_password" value="<?php echo $password;?>" />
+                                                        A verification email has been sent to your given email address.<br><br>
+                                                        Please visit your spam or junk email folders if you do not find the email within next 2 minutes.
+
+                                                        <br><br>
+                                                        Still not received the email? Click below to resend.
+                                                        <br><br>
+                                                        <button type="button" class="btn btn-primary" onclick="javascript:return resentverificaion(this);" >RESEND VERIFICATION EMAIL</button>
+                                                        <br><br>
+                                                        <div id="dvMessage"></div>
+                                                    </div>
+                                                    <script>
+                                                        $(document).ready(function(){
+
+                                                        });
+                                                        function resentverificaion(obj){
+                                                            //$(this).html("<img src='/assets/imgs/");
+                                                            _username = $("#get_username").val();
+                                                            _password = $("#get_password").val();
+
+                                                            $(obj).html("Sending..");
+                                                            $.ajax({url: home_url+"login/send_verification_mail",
+                                                                data: {
+                                                                    "username": _username,
+                                                                    "password": _password
+                                                                },
+                                                                dataType: "json",
+                                                                type: "POST",
+                                                                success: function(response){
+
+                                                                    if(response.status=='1') {
+
+                                                                        $("#dvMessage").removeClass("alert alert-danger");
+                                                                        $("#dvMessage").addClass("alert alert-success");
+                                                                        $("#dvMessage").html("Mail sent").show();
+                                                                        $("#dvMessage").fadeOut(3000);
+                                                                        $(obj).html("Resend verification mail");
+                                                                    }
+                                                                    else{
+
+                                                                        $("#dvMessage").addClass("alert alert-danger");
+                                                                        $("#dvMessage").html(response.message).show();
+                                                                        $(obj).html("Resend verification mail");
+                                                                        return false;
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+
+                                                    </script>
+                                                <?php }?>
+
+                                            </div>
+
+                                    </div>
+                           </div>
+                       </div>
+                </div> <!-- Body Panel -->
+           </div>
+        </div>
+        <!-- PAGE CONTENT WRAPPER -->
+      </div>
+            <!-- END PAGE CONTENT -->
+ </div>
+
+ <?php
+ $this->load->view('site/footer');
+ ?>
+</xmp></code></pre>
+        <code>application/views/site/coach.php</code>
+        <pre><code class="language-html"><xmp> <?php $this->load->view('site/header');?>
+ <style>
+ .boost {
+     color: #fff;
+     font-size: 28px;
+    margin: 8px 0 0;
+    padding-left: 200px;
+    text-align: center;
+}
+ </style>
+
+ <link rel="stylesheet" type="text/css"   href="<?php echo base_url()."assets/";?>css/fast-buddy.css"/>
+    <!-- PAGE CONTENT WRAPPER -->
+ <div class="page-content-wrap">
+       <div class="row">
+         <div class="col-md-12">
+           <div class="panel panel-default">
+               <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-5 col-lg-offset-1"><strong>
+                                <?php if($error_message !="") echo "<i style='color:red'>".$error_message."</i>";?>
+                            </strong></div>
+                    </div>
+
+
+                         <div class="row" style="padding-top:0px;">
+
+                              <div class="col-md-6">
+                                <img src="<?php echo base_url()."assets/";?>img/portal3Dbox.png" class="img-responsive" style="padding-left:50px; padding-top:20px;">
+                            </div>
+                                        <!-- step 1 -->
+                            <div class="col-md-6"  id="hide_div">
+                                    <div class="registration-container">
+                                            <div class="registration-box animated fadeInDown">
+
+                                                <div class="registration-body">
+                                                <?php if($success_message ==""){?>
+                                                    <div class="registration-title"><strong>Registration</strong>, use form below</div>
+
+                                                    <form action="#" class="form-horizontal" method="post" id="jvalidate" role="form">
+
+                                                    <!--<h4>Personal info</h4>-->
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="text" name="first_name" class="form-control" placeholder="Name *"  value="<?php echo $first_name;?>"  maxlength="50" required/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <input type="email" name="email" class="form-control" placeholder="E-mail *" value="<?php echo $email;?>"  required/>
+                                                        </div>
+                                                    </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="password" name="password"  id="password" class="form-control" placeholder="Password *" value="<?php echo $password;?>"  max="40" required/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password *" value="<?php echo $confirm_password;?>"  max="40" required/>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    <div class="form-group push-up-30">
+
+                                                        <div class="col-md-6">
+                                                       <input type="submit" name="submit" id="step_first" class="btn btn-danger btn-block" value="Sign Up"/>
+                                                        </div>
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                                <script>
+                                                    var password = document.getElementById("password")
+                                                        , confirm_password = document.getElementById("confirm_password");
+
+                                                    function validatePassword(){
+                                                        if(password.value != confirm_password.value) {
+                                                            confirm_password.setCustomValidity("Passwords Don't Match");
+                                                        } else {
+                                                            confirm_password.setCustomValidity('');
+                                                        }
+                                                    }
+
+                                                    password.onchange = validatePassword;
+                                                    confirm_password.onkeyup = validatePassword;
+                                                </script>
+                                                <?php } else {?>
+<p>
+                                            Congratulations!! <?php echo trim($first_name);?>,<br><br>You have Registration.<br><br>
+                                        </p>
+                                            <p>
+                                                Your User Name is <?=$first_name?></p>
+                                                <p>And Your Password <?= $password ?></p>
+                                                <p>
+                                                <?php if($user_type =="member"){?>
+                                                    Click <a href="<?php echo base_url() . $user_type;?>/edit_profile">here</a> to login</p>
+                                            <?php }else if($user_type == "yogiccoach"){?>
+                                                Click <a href="<?php echo base_url() . $user_type;?>/setting_edit_profile">here</a> to login</p>
+                                            <?php }?>
+                                                <?php }?>
+
+                                            </div>
+
+                                    </div>
+                           </div>
+                       </div>
+                </div> <!-- Body Panel -->
+           </div>
+        </div>
+        <!-- PAGE CONTENT WRAPPER -->
+      </div>
+            <!-- END PAGE CONTENT -->
+ </div>
+
+ <?php
+ $this->load->view('site/footer');
+ ?>
+</xmp></code></pre>
+        <h2>As I told above that we have 3 types of users, then you can read their documentation by clicking on the link given below.</h2>
+        <a href="admin.html" class="btn btn-info" target="_blank" rel="noopener noreferrer">Admin</a>
+        <a href="coach.html" class="btn btn-info" target="_blank" rel="noopener noreferrer">Coach</a>
+        <a href="member.html" class="btn btn-info" target="_blank" rel="noopener noreferrer">Member</a>
+    </div><br><br>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
