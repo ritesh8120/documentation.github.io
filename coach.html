@@ -3069,4 +3069,592 @@ $this->db->update('payment',$data);
 $data1 = "Payment updated";
 echo json_encode($data1);
 }</xmp></code></pre>
+<p>Report list</p>
+<img class="img-fluid" src="image/reportistcoach.png" alt="Login Page" height="100">
+<br><br>
+<p>report list controller</p>
+<code>application/controllers/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function reports()
+{
+$this->load->view('yogiccoach/reports');
+}</xmp></code></pre>
+<p>report list view</p>
+<code>application/views/yogiccoach/reports.php</code>
+<pre><code class="language-html"><xmp><?php
+$this->load->view('yogiccoach/sidebar');
+$session=$this->session->get_userdata();
+$user_id=$session['user_id'];
+?>
+
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb">
+    <li><a href="<?php echo base_url()." yogiccoach"; ?>">Home</a></li>
+    <li class="active">Reports </li>
+</ul>
+<!-- END BREADCRUMB -->
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+
+    <!-- PAGE TITLE -->
+    <div class="page-title">
+        <h2>Reports</h2>
+
+    </div>
+    <!-- END PAGE TITLE -->
+    <!-- PAGE CONTENT WRAPPER -->
+    <div class="page-content-wrap">
+        <!-- START WIDGETS -->
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body panel-body-image">
+                        <a href="<?php echo base_url()." yogiccoach/view_member_list";?>"><img
+                                src="<?php echo base_url()." assets/images/";?>members.jpg" alt="Members Details"/></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body panel-body-image">
+                        <a href="<?php echo base_url()." yogiccoach/history_of_member";?>"><img
+                                src="<?php echo base_url()." assets/images/";?>history1.png" alt="History"/></a>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="col-md-4">
+						<div class="panel panel-default">                            
+                            <div class="panel-body panel-body-image">
+                                <a href="<?php echo base_url()."yogiccoach/coaching_session_member_list";?>"><img src="<?php echo base_url()."assets/images/";?>coaching_session.png" alt="Coaching Session"/></a>
+							</div>
+						</div>
+					</div>-->
+
+            <!-- <div class="col-md-4">
+						<div class="panel panel-default">                            
+                            <div class="panel-body panel-body-image">
+                                <a href="<?php echo base_url()."yogiccoach/event_schedule_member_status";?>"><img src="<?php echo base_url()."assets/images/";?>appointmentSch.jpg" alt="Appointment Scheduler"/></a>
+							</div>
+						</div>
+					</div> -->
+
+            <!-- <div class="col-md-4">
+						<div class="panel panel-default">                            
+                            <div class="panel-body panel-body-image">
+                                <a href="<?php echo base_url()."yogiccoach/view_member_allForm/";?>"><img src="<?php echo base_url()."assets/";?>images/coaching-form.jpg" alt="Coaching-Form"/></a>
+							</div>
+						</div>
+					</div> -->
+
+            <!--<div class="col-md-4">
+						<div class="panel panel-default">                            
+                            <div class="panel-body panel-body-image">
+                                <a href="<?php echo base_url()."yogiccoach/gratitude_journal_report/";?>"><img src="<?php echo base_url()."assets/";?>images/gratitude1.jpg" alt="Gratitude Journal"/></a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-md-4">
+						<div class="panel panel-default">                            
+                            <div class="panel-body panel-body-image">
+                                <a href="<?php echo base_url()."yogiccoach/intention_setting_report/";?>"><img src="<?php echo base_url()."assets/";?>images/intention.jpg" alt="Intention Journal"/></a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-md-4">
+							<div class="panel panel-default">                            
+                                <div class="panel-body panel-body-image">
+                                    <a href="<?php echo base_url()."yogiccoach/memberList/";?>"><img src="<?php echo base_url()."assets/";?>images/wheel_life.jpg" alt="wheel Of life"/></a>
+								</div>
+							</div>
+						</div>-->
+
+            <!--<div class="col-md-4">
+						<div class="panel panel-default">                            
+                            <div class="panel-body panel-body-image">
+                                <a href="<?php echo base_url()."yogiccoach/daily_accountability_users/";?>"><img src="<?php echo base_url()."assets/";?>images/dailyaccount.jpg" alt="Daily Accountability Score"/></a>
+							</div>
+						</div>
+					</div>-->
+
+
+        </div>
+        <!-- END WIDGETS -->
+    </div>
+    <!-- END PAGE CONTENT WRAPPER -->
+
+    <!-- success -->
+    <div class="message-box message-box-success animated fadeIn" id="message-box-success">
+        <div class="mb-container">
+            <div class="mb-middle">
+                <div class="mb-title">Daily Accountability Score</div>
+                <div class="mb-content">
+                    <p>The daily measure has a score setting of 70 point ( this can be different) – the day is divided
+                        into segments and each segment (inspired by Vedic -chaughadiyas + the 5 times of Namaz & daily
+                        confession of church ) <br><br>
+                        There are 6 segments –scoring is from 1-10 (10 being high) The last one is based on becoming
+                        present 5 times per day ( set alarms in the phone- and when the alarm goes off- at that moment
+                        or in a short time- take a moment to do 1 minute meditation—become focused and centered) This
+                        has to be done five times in the waking hours
+                        At the end of the day you give yourself a score—a value from 1-10 <br><br>
+                        The total score is out of 70 – The total-final score is taken into account.<br><br>
+                        On a daily basis—date based- it will be added ( we can set different matrix—or graphs to see the
+                        result—based on the 7 matrix—wakeup / work etc the total can be viewed from a particular date to
+                        another date. A monthly score or a graph will be nice. ( can be added in phase II)
+                        The admin or the coach can monitor this graph and know where the problem lies—whether it is the
+                        work area or daily routine of waking up or diet
+                    </p>
+                </div>
+                <div class="mb-footer">
+                    <button class="btn btn-default btn-lg pull-right mb-control-close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end success -->
+    <!-- START SCRIPTS -->
+    <!-- START PLUGINS -->
+    <script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery - ui.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / bootstrap / bootstrap.min.js"></script>
+    <!-- END PLUGINS -->
+
+    <!-- START THIS PAGE PLUGINS-->
+    <script type='text/javascript' src='<?php echo base_url()."assets/";?>js/plugins/icheck/icheck.min.js'></script>
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / mcustomscrollbar / jquery.mCustomScrollbar.min.js"></script>
+
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / bootstrap / bootstrap - datepicker.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / bootstrap / bootstrap - file - input.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / bootstrap / bootstrap - select.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()."
+        assets/";?>js / plugins / tagsinput / jquery.tagsinput.min.js"></script>
+    <!-- END THIS PAGE PLUGINS-->
+
+    <!-- START TEMPLATE -->
+
+    <script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins.js"></script>
+    <!--<script type="text/javascript" src="<?php echo base_url()."assets/";?>js/actions.js"></script>-->
+
+    <!-- END TEMPLATE -->
+    <!-- END SCRIPTS -->
+
+
+    <?php
+$this->load->view('yogiccoach/footer');
+?>
+</xmp></code></pre>
+<p>view member list</p>
+<img class="img-fluid" src="image/viewmemberlistcoach.png" alt="Login Page" height="100">
+<br><br>
+<p>view member list controller</p>
+<code>application/controllers/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function view_member_list()
+{
+$this->load->view('yogiccoach/view_member_list');
+}</xmp></code></pre>
+<p>view member list view</p>
+<code>application/views/yogiccoach/view_member_list.php</code>
+<pre><code class="language-html"><xmp><?php
+$this->load->view('yogiccoach/sidebar');
+error_reporting(0);
+$session = $this->session->get_userdata();
+$yogi_id=$session['user_id'];
+//print_r($yogi_id);
+$cat_list=$this->Common_model->get_table_records('users',array('fld_parent'=>$yogi_id));
+$row_cont=1;
+$catRow='';
+					
+foreach ($cat_list as $Row){
+		$timestamp=$Row->fld_added_date;
+		$startDate=date('m/d/Y',$timestamp);
+		$first=$Row->fld_first_name;
+		$last=$Row->fld_last_name;
+		$name= $first.' '.$last;
+		if(($Row->fld_status)=='1'){
+			$status= 'Active';
+		}
+		if(($Row->fld_status)=='0'){
+			$status= 'Deactive';
+		}
+				
+				
+				$catRow.='<tr class="gradeA">
+							<td>'.$row_cont.'</td>
+							<td>'.$Row->fld_id.'</td>
+							<td>'.$name.'</td>
+							<td>'.$Row->fld_email.'</td>
+							<td>'.$Row->fld_phone.'</td>
+							<td>'.$status.'</td>
+							<td>'.$startDate.'</td>
+							<td>'.$Row->fld_location.'</td>
+							<td>'.$Row->fld_last_date.'</td>
+							<td>'.date("m/d/Y", strtotime(date("m/d/Y", $Row->fld_added_date).'+1 month')).'</td>
+						 </tr>';
+			$row_cont++;
+								  
+}
+
+?>
+
+<ul class="breadcrumb push-down-1">
+    <li><a href="<?php echo base_url()." yogiccoach";?>">Dashboard</a></li>
+    <li><a href="<?php echo base_url()." yogiccoach/reports";?>">Reports</a></li>
+    <li class="active"><a href="#">View Member List</a></li>
+</ul>
+<h2>&nbsp;&nbsp; View Member List</h2>
+<!-- END BREADCRUMB -->
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+
+    <!-- START WIDGETS -->
+    <form action="#" class="form-horizontal" method="post">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body panel-body-table">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-actions">
+                                    <thead>
+                                        <tr>
+                                            <th>##</th>
+                                            <th>Id</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Location</th>
+                                            <th>Last Payment</th>
+                                            <th>Next Payment</th>
+                                        </tr>
+                                    </thead>
+                                    <?php echo $catRow;?>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- END WIDGETS -->
+</div>
+<!-- END PAGE CONTENT WRAPPER -->
+
+
+<?php
+ $this->load->view('yogiccoach/footer');
+ ?>
+</xmp></code></pre>
+<p>history member list</p>
+<img class="img-fluid" src="image/historymemberlistcoach.png" alt="Login Page" height="100">
+<br><br>
+<p>history member list controller</p>
+<code>application/controllers/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function history_of_member()
+{
+$this->load->view('yogiccoach/history_of_member');
+}</xmp></code></pre>
+<p>history member list view</p>
+<code>application/views/yogiccoach/history_of_member.php</code>
+<pre><code class="language-html"><xmp><?php
+$this->load->view('yogiccoach/sidebar');
+?>
+
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb">
+    <li><a href="<?php echo base_url()." yogiccoach"; ?>">Home</a></li>
+    <li><a href="<?php echo base_url()." yogiccoach/reports"; ?>">Reports</a></li>
+    <li class="active">History Report</li>
+</ul>
+<!-- END BREADCRUMB -->
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+
+    <!-- PAGE TITLE -->
+    <div class="page-title">
+        <form action="#" class="form-horizontal" method="post">
+
+            <h2>History Of Members</h2>
+        </form>
+    </div>
+    <!-- END PAGE TITLE -->
+
+    <!-- PAGE CONTENT WRAPPER -->
+    <div class="page-content-wrap">
+        <form action="" method="post" role="form" class="form-material form-horizontal" id="submit_final_form"
+            autocomplete="off">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- START BASIC ELEMENTS -->
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div>
+                                    <label style="text-align:center;">Search by date</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <form action="#" method="post" class="form-horizontal">
+                                    <div class="col-md-3">
+                                        <input type="text" name="formDate" id="formDate" class="form-control datepicker"
+                                            placeholder="From">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="toDate" id="toDate" class="form-control datepicker"
+                                            placeholder="To">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a href="#" class="btn btn-primary pull-right dateViewData">View</a>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="form-group">
+
+                            </div>
+
+
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div>
+                                    <label style="text-align:center;">Search by Name</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <form action="#" method="post" class="form-horizontal">
+                                    <div class="col-md-3">
+                                        <input type="text" id="nameView" class="form-control" placeholder="Type Name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="#" class="btn btn-primary pull-right viewHistoryName">View</a>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="form-group">
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <!-- END BASIC ELEMENTS -->
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END PAGE CONTENT WRAPPER -->
+
+<!-- START PLUGINS -->
+
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / jquery - 1.6.2.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery - ui.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / bootstrap / bootstrap.min.js"></script>
+<!-- END PLUGINS -->
+<!-- START THIS PAGE PLUGINS-->
+<script type='text/javascript' src="<?php echo base_url()." assets/";?>js / plugins / icheck / icheck.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / mcustomscrollbar / jquery.mCustomScrollbar.min.js"></script>
+
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - datepicker.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - timepicker.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - colorpicker.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - file - input.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - select.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / tagsinput / jquery.tagsinput.min.js"></script>
+
+<!-- END THIS PAGE PLUGINS-->
+
+<!-- START TEMPLATE -->
+
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins.js"></script>
+<!--<script type="text/javascript" src="<?php echo base_url()."assets/";?>js/actions.js"></script>-->
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / fire - 0.62.min.js"></script>
+<!-- END TEMPLATE -->
+
+
+<?php
+ $this->load->view('yogiccoach/footer');
+ ?>
+</xmp></code></pre>
+<p>view history by date</p>
+<img class="img-fluid" src="image/viewhistorybydatecoach.png" alt="Login Page" height="100">
+<br><br>
+<p>view history by date controller</p>
+<code>application/controllers/yogiccoach.php</code>
+<pre><code class="language-html"><xmp>public function view_history_date()
+{
+$this->load->view('yogiccoach/view_history_date');
+}</xmp></code></pre>
+<p>view history by date view</p>
+<code>application/views/yogiccoach/view_history_date.php</code>
+<pre><code class="language-html"><xmp><?php
+$this->load->view('yogiccoach/sidebar');
+//error_reporting(0);
+ $formDate=$_GET['fdate'];
+ $toDate=$_GET['tdate'];
+$this->db->where('fld_select_date >=',date("Y-m-d",strtotime($formDate)));
+$this->db->where('fld_select_date <=',date("Y-m-d",strtotime($toDate)));
+$resultValue=$this->db->get('yogi_history');
+$row_cont=1;
+$catRow='';
+$result=$resultValue->result();
+
+foreach ($result as $Row){
+	$catRow.='<tr class="gradeA">
+				<td>'.$row_cont.'</td>
+				<td>'.$Row->fld_member_name.'</td>
+				<td>'.date("m/d/Y",strtotime($Row->fld_select_date)).'</td>
+				<td>'.$Row->fld_topic.'</td>
+				<td>'.$Row->fld_details.'</td>
+			  </tr>';
+	$row_cont++;
+	
+	
+}
+	
+	
+
+
+
+?>
+
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb">
+    <li><a href="<?php echo base_url()." yogiccoach"; ?>">Home</a></li>
+    <li class="active">History Report</li>
+</ul>
+<!-- END BREADCRUMB -->
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+
+    <!-- PAGE TITLE -->
+    <div class="page-title">
+        <form action="#" class="form-horizontal" method="post">
+
+            <h2>History Of Members</h2>
+        </form>
+    </div>
+    <!-- END PAGE TITLE -->
+
+    <!-- PAGE CONTENT WRAPPER -->
+    <div class="page-content-wrap">
+        <form action="" method="post" role="form" class="form-material form-horizontal">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- START BASIC ELEMENTS -->
+                    <div class="panel panel-default">
+                        <div class="panel-body panel-body-table">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-actions">
+                                    <thead>
+                                        <tr>
+                                            <th>##</th>
+                                            <th>Name</th>
+                                            <th>Date</th>
+                                            <th>Topic</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <?php echo $catRow;?>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- END BASIC ELEMENTS -->
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END PAGE CONTENT WRAPPER -->
+
+<!-- START PLUGINS -->
+
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / jquery - 1.6.2.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / jquery / jquery - ui.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins / bootstrap / bootstrap.min.js"></script>
+<!-- END PLUGINS -->
+<!-- START THIS PAGE PLUGINS-->
+<script type='text/javascript' src="<?php echo base_url()." assets/";?>js / plugins / icheck / icheck.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / mcustomscrollbar / jquery.mCustomScrollbar.min.js"></script>
+
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - datepicker.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - timepicker.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - colorpicker.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - file - input.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / bootstrap / bootstrap - select.js"></script>
+<script type="text/javascript" src="<?php echo base_url()."
+    assets/";?>js / plugins / tagsinput / jquery.tagsinput.min.js"></script>
+
+<!-- END THIS PAGE PLUGINS-->
+
+<!-- START TEMPLATE -->
+
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / plugins.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / actions.js"></script>
+<script type="text/javascript" src="<?php echo base_url()." assets/";?>js / fire - 0.62.min.js"></script>
+<!-- END TEMPLATE -->
+<script>
+    var options = [];
+
+    $('.dropdown-menu a').on('click', function (event) {
+
+        var $target = $(event.currentTarget),
+            val = $target.attr('data-value'),
+            $inp = $target.find('input'),
+            idx;
+        options.push(val);
+        setTimeout(function () { $inp.prop('checked', true) }, 0);
+        $('#show_val').val($inp.attr('value'));
+        $('#show_val').dropdown - menu('hide');
+        $(event.target).blur();
+
+        console.log(options);
+        return false;
+    });
+
+</script>
+
+<?php
+ $this->load->view('yogiccoach/footer');
+ ?>
+</xmp></code></pre>
 </div>
